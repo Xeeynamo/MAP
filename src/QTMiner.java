@@ -39,6 +39,33 @@ public class QTMiner {
     }
     public Cluster buildCandidateCluster(Data data, boolean isClustered[])
     {
-        return new Cluster();
+        Cluster cc=new Cluster(data.getItemSet(0)); //sarà il Candidato Cluster (nota: avrà size=0, quindi sarà sostituito dal primo //cluster rilevato, visto che quest'ultimo avrà ALMENO size=1, vedi if cc.getSize<c.getSize)
+		
+        for(int i=0;i<data.getNumberOfExamples();i++)
+        {
+			//costruisco un nuovo cluster, assicurandomi che non faccia parte di un altro cluster
+            if (!isClustered[i])
+            {
+                //Costruisco il cluster che dovrà confrontarsi con il Candidato Cluster
+                Cluster c=new Cluster (data.getItemSet(i));
+                //Verifico quali/quante tuple facciano parte del cluster in analisi
+                for(int j=0;j<data.getNumberOfExamples();j++)
+                {
+                    //Definisco la tupla alla j-esima posizione e anche per essa controllo che non faccia parte di un altro cluster
+                    if(!isClustered[j])
+                    {
+						//se appartiene al cluster in analisi allora lo aggiungo
+                        if(c.getCentroid().getDistance(data.getItemSet(j))<=this.radius)
+                            c.addData(j);
+                    }
+                }
+                //confronto il (finora) Candidato Cluster con il Cluster appena ottenuto
+                //chi conterrà più tuple sarà il Candidato Cluster
+                if(cc.getSize()<c.getSize())
+                    cc=c;
+            }
+        }
+		//ritorno il cluster più popolo (con più tuple) ritrovato
+        return cc;
     }
 }
