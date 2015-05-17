@@ -1,3 +1,4 @@
+package data;
 /**
  * Rappresentazione di un attributo contenente valori discreti
  *

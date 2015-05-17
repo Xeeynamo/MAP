@@ -1,3 +1,4 @@
+package data;
 /**
  * Generico oggetto, descritto da l'attributo e valore associati
  */
