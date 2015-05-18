@@ -1,7 +1,7 @@
 package utility;
 import java.util.Arrays;
 
-
+/*
 public class ArraySet {
 	private boolean set[];
 	private int size=0;
@@ -73,4 +73,4 @@ public class ArraySet {
 		}
 		return a;
 	}
-}
+}*/

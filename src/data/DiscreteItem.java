@@ -33,6 +33,8 @@ public class DiscreteItem extends Item {
     	if (getClass() != obj.getClass())
     		return false;
     	DiscreteItem other = (DiscreteItem) obj;
+        if (this.getAttribute().getName().compareTo(other.getAttribute().getName()) != 0)
+            return false;
     	if (this.getValue() == null) 
         	{
     		if (other.getValue() != null)

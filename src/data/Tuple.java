@@ -1,5 +1,7 @@
 package data;
 
+import java.util.*;
+
 /**
  *
  * @author Windows 7
@@ -37,15 +39,15 @@ public class Tuple
         return x;
     }
     
-    public double avgDistance(Data data, int clusteredData[])
+    public double avgDistance(Data data, Set<Integer> clusteredData)
     {
         double p=0.0,sumD=0.0;
-        for(int i=0;i<clusteredData.length;i++)
+        for(Iterator<Integer> iterator = clusteredData.iterator(); iterator.hasNext(); )
         {
-            double d= getDistance(data.getItemSet(clusteredData[i]));
+            double d= getDistance(data.getItemSet(iterator.next()));
             sumD+=d;
         }
-        p=sumD/clusteredData.length;
+        p=sumD/clusteredData.size();
         return p;
     }
 }

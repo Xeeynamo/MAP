@@ -1,21 +1,23 @@
 package mining;
 
+import java.util.*;
 import data.Data;
 import data.Tuple;
-import utility.ArraySet;
 
-public class Cluster {
+public class Cluster implements Iterable<Integer>, Comparable<Cluster>
+{
 	private Tuple centroid;
 
-	private ArraySet clusteredData; 
-	
+	//private ArraySet clusteredData;
+	private Set<Integer> clusteredData;
+
 	/*Cluster(){
 		
 	}*/
 
 	public Cluster(Tuple centroid){
 		this.centroid=centroid;
-		clusteredData=new ArraySet();
+		clusteredData = new HashSet<>();
 		
 	}
 		
@@ -31,13 +33,13 @@ public class Cluster {
 	
 	//verifica se una transazione è clusterizzata nell'array corrente
 	boolean contain(int id){
-		return clusteredData.get(id);
+		return clusteredData.contains(id);
 	}
 	
 
 	//remove the tuplethat has changed the cluster
 	void removeTuple(int id){
-		clusteredData.delete(id);
+		clusteredData.remove(id);
 		
 	}
 	
@@ -45,9 +47,14 @@ public class Cluster {
 		return clusteredData.size();
 	}
 	
-	
-	int[] iterator(){
-		return clusteredData.toArray();
+	public int compareTo(Cluster cluster)
+	{
+		return 0;
+	}
+
+	public Iterator<Integer> iterator()
+	{
+		return clusteredData.iterator();
 	}
 	
 	public String toString(){
@@ -68,15 +75,26 @@ public class Cluster {
 		for(int i=0;i<centroid.getLenght();i++)
 			str+=centroid.get(i)+ " ";
 		str+=")\nExamples:\n";
-		int array[]=clusteredData.toArray();
-		for(int i=0;i<array.length;i++){
+		Iterator<Integer> array = iterator();
+		/*for(int i = 0; i < getSize(); i++)
+		{
 			str+="[";
 			for(int j=0;j<data.getNumberOfExplanatoryAttributes();j++)
 				str+=data.getValue(array[i], j)+" ";
 			str+="] dist="+getCentroid().getDistance(data.getItemSet(array[i]))+"\n";
-			
+		}*/
+		HashSet<Integer> set = new HashSet<Integer>();
+		for (Iterator<Integer> i = iterator(); i.hasNext();)
+		{
+			Integer v = i.next();
+			set.add(v);
+			str+="[";
+			for(int j=0;j<data.getNumberOfExplanatoryAttributes();j++)
+				str+=data.getValue(v, j)+" ";
+			str+="] dist="+getCentroid().getDistance(data.getItemSet(v))+"\n";
 		}
-		str+="\nAvgDistance="+getCentroid().avgDistance(data, array);
+
+		str+="\nAvgDistance="+getCentroid().avgDistance(data, set);
 		return str;
 		
 	}

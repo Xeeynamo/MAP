@@ -1,5 +1,6 @@
 package mining;
 
+import java.util.*;
 import data.Data;
 import exception.ClusteringRadiusException;
 import exception.EmptyDatasetException;
@@ -75,10 +76,10 @@ public class QTMiner
             C.add(c);
             numclusters++;
             //Rimuovo tuple clusterizzate da dataset
-            int clusteredTupleId[]=c.iterator();
-            for(int i=0;i<clusteredTupleId.length;i++)
+            ;
+            for(Iterator<Integer> clusteredTupleId = c.iterator(); clusteredTupleId.hasNext(); )
             {
-                isClustered[clusteredTupleId[i]]=true;
+                isClustered[clusteredTupleId.next()] = true;
             }
             countClustered+=c.getSize();
         }

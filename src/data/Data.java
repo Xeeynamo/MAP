@@ -8,7 +8,7 @@ public class Data {
     // cardinalità dell'insieme di transazioni (numero di righe in data)
     private int numberOfExamples;
 
-    private Attribute explanatorySet[];
+    private List<Attribute> explanatorySet;
 
 
     public Data() {
@@ -90,34 +90,34 @@ public class Data {
 		this.data[13][4]="No";
 		
 		this.numberOfExamples=14;
-		explanatorySet=new Attribute[5];
+		explanatorySet = new LinkedList<>();
 		//Outlook
 		String OutlookValues[]=new String[3];
 		OutlookValues[0]="Sunny";
 		OutlookValues[1]="Rain";
 		OutlookValues[2]="Overcast";
-		explanatorySet[0]=new DiscreteAttribute("outlook",0,OutlookValues);
+		explanatorySet.add(new DiscreteAttribute("outlook",0,OutlookValues));
 		//Temperature
 		String TemperatureValues[]=new String[3];
 		TemperatureValues[0]="Hot";
 		TemperatureValues[1]="Mild";
 		TemperatureValues[2]="Cool";
-		explanatorySet[1]=new DiscreteAttribute("temperature",1,TemperatureValues);
+		explanatorySet.add(new DiscreteAttribute("temperature",1,TemperatureValues));
 		//Humidity
-		String HumidityValues[]=new String[3];
+		String HumidityValues[]=new String[2];
 		HumidityValues[0]="Normal";
 		HumidityValues[1]="Hot";
-		explanatorySet[2]=new DiscreteAttribute("humidity",2,HumidityValues);
+		explanatorySet.add(new DiscreteAttribute("humidity",2,HumidityValues));
 		//Wind
 		String WindValues[]=new String[2];
 		WindValues[0]="Weak";
 		WindValues[1]="Strong";
-		explanatorySet[3]=new DiscreteAttribute("wind",3,WindValues);
+		explanatorySet.add(new DiscreteAttribute("wind",3,WindValues));
 		//PlayTennis
 		String PlayTennisValues[]=new String[2];
 		PlayTennisValues[0]="No";
 		PlayTennisValues[1]="Yes";
-		explanatorySet[4]=new DiscreteAttribute("wind",4,WindValues);
+		explanatorySet.add(new DiscreteAttribute("wind",4,WindValues));
     }
 
     /**
@@ -161,7 +161,7 @@ public class Data {
      */
     
 	public Attribute getAttribute(int index) {
-        return explanatorySet[index];
+        return explanatorySet.get(index);
     }
 
     /**
@@ -169,18 +169,11 @@ public class Data {
      * @return numero di attributi
      */
 	public int getNumberOfExplanatoryAttributes() {
-        return explanatorySet.length;
+        return explanatorySet.size();
     }
 
 
-    /**
-     * Ottiene il valore della tabella
-     * @param exampleIndex riga
-     * @param attributeIndex colonna
-     * @return valore
-     */
-    
-    public Attribute[] getAttributeSchema()
+    public List<Attribute> getAttributeSchema()
     {
         return this.explanatorySet;
     }
@@ -197,18 +190,18 @@ public class Data {
 		for(int i=0;i<numberOfExamples;i++)
                 {
 			value+=(i+1)+":";
-			for(int j=0;j<explanatorySet.length-1;j++)
+			for(int j = 0; j < getNumberOfExplanatoryAttributes() -1 ; j++)
 				value+=this.getValue(i, j)+",";
-			value+=this.getValue(i, explanatorySet.length-1)+"\n";
+			value+=this.getValue(i, getNumberOfExplanatoryAttributes()-1)+"\n";
 		}
 		return value;
 	}
 
     public Tuple getItemSet(int index)
     {
-        Tuple tuple=new Tuple(explanatorySet.length);
-        for(int i=0;i<explanatorySet.length;i++)
-            tuple.add(new DiscreteItem((DiscreteAttribute)explanatorySet[i],(String)data[index][i]),i);
+        Tuple tuple=new Tuple(getNumberOfExplanatoryAttributes());
+        for(int i=0;i<getNumberOfExplanatoryAttributes();i++)
+            tuple.add(new DiscreteItem((DiscreteAttribute)getAttribute(i),(String)data[index][i]),i);
         return tuple;
     }
 
