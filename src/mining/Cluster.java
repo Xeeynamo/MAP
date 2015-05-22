@@ -49,7 +49,7 @@ public class Cluster implements Iterable<Integer>, Comparable<Cluster>
 	
 	public int compareTo(Cluster cluster)
 	{
-		return 0;
+		return (clusteredData.size() != cluster.getSize()) == true ? 1 : -1;
 	}
 
 	public Iterator<Integer> iterator()

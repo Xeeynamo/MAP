@@ -1,51 +1,51 @@
 package mining;
 
+import java.util.*;
 import data.Data;
 
 /**
  *
  * @author Windows 7
  */
-public class ClusterSet 
+public class ClusterSet implements Iterable<Cluster>
 {
-    private Cluster C[]=new Cluster[0];
+    private Set<Cluster> C;
     
-    ClusterSet(){}
+    ClusterSet()
+    {
+    	C = new TreeSet<Cluster>();
+    }
     
     void add(Cluster c)
     {
-        Cluster tempC[]=new Cluster[this.C.length+1];
-        for(int i=0;i<this.C.length;i++)
-            tempC[i]=this.C[i];
-        tempC[this.C.length]=c;
-        this.C=tempC;
+        C.add(c);
     }
     
-    Cluster get(int i)
+    public Iterator <Cluster> iterator ()
     {
-        if (i<this.C.length)
-            return this.C[i];
-        else
-            return null;
+    	return C.iterator();
     }
     
     public String toString ()
     {
         String x="";
-        for(int i=0;i<this.C.length;i++)
-            x+=this.C[i].toString();
+        Iterator<Cluster> it=C.iterator();
+        while(it.hasNext())
+        	x+=it.next().toString();
         return x;
     }
     
     public String toString(Data data )
     {
         String str="";
-        for(int i=0;i<this.C.length;i++)
+        Iterator<Cluster> it=C.iterator();
+        for (int i=0;it.hasNext();i++)
         {
-            if (this.C[i]!=null)
-            {
-                str+=i+":"+this.C[i].toString(data)+"\n";
-            }
+        	Cluster c=it.next();
+        	if (c!=null)
+        	{
+        		str+=i+":"+c.toString(data)+"\n";
+        	}
         }
         return str;
     }
