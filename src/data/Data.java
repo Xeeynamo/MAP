@@ -29,20 +29,20 @@ public class Data {
 		this.data[12][0]="Overcast";
 		this.data[13][0]="Rain";
 		//Temperature
-		this.data[0][1]="Hot";
-		this.data[1][1]="Hot";	
-		this.data[2][1]="Hot";	
-		this.data[3][1]="Mild";	
-		this.data[4][1]="Cool";	
-		this.data[5][1]="Cool";	
-		this.data[6][1]="Cool";	
-		this.data[7][1]="Mild";	
-		this.data[8][1]="Cool";	
-		this.data[9][1]="Mild";	
-		this.data[10][1]="Mild";	
-		this.data[11][1]="Mild";	
-		this.data[12][1]="Hot";	
-		this.data[13][1]="Mild";
+		data[0][1]=new Double (30.3);
+		data[1][1]=new Double (30.3);
+		data[2][1]=new Double (30);
+		data[3][1]=new Double (13);
+		data[4][1]=new Double (0);
+		data[5][1]=new Double (0);
+		data[6][1]=new Double (0.1);
+		data[7][1]=new Double (13);
+		data[8][1]=new Double (0.1);
+		data[9][1]=new Double (12);
+		data[10][1]=new Double (12.5);
+		data[11][1]=new Double (12.5);
+		data[12][1]=new Double(29.21);
+		data[13][1]=new Double (12.5);
 		//Humidity
 		this.data[0][2]="High";
 		this.data[1][2]="High";
@@ -98,11 +98,7 @@ public class Data {
 		OutlookValues[2]="Overcast";
 		explanatorySet.add(new DiscreteAttribute("outlook",0,OutlookValues));
 		//Temperature
-		String TemperatureValues[]=new String[3];
-		TemperatureValues[0]="Hot";
-		TemperatureValues[1]="Mild";
-		TemperatureValues[2]="Cool";
-		explanatorySet.add(new DiscreteAttribute("temperature",1,TemperatureValues));
+		explanatorySet.add(new ContinuousAttribute("Temperature",1, 3.2, 38.7));
 		//Humidity
 		String HumidityValues[]=new String[2];
 		HumidityValues[0]="Normal";
@@ -201,7 +197,12 @@ public class Data {
     {
         Tuple tuple=new Tuple(getNumberOfExplanatoryAttributes());
         for(int i=0;i<getNumberOfExplanatoryAttributes();i++)
-            tuple.add(new DiscreteItem((DiscreteAttribute)getAttribute(i),(String)data[index][i]),i);
+        {
+        	if(DiscreteAttribute.class.isInstance(getAttribute(i)))
+        		tuple.add(new DiscreteItem((DiscreteAttribute)getAttribute(i),(String)data[index][i]),i);
+        	else
+        		tuple.add(new ContinuousItem((ContinuousAttribute)getAttribute(i),(double)data[index][i]),i);
+        }
         return tuple;
     }
 
