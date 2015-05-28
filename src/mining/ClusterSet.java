@@ -7,7 +7,7 @@ import data.Data;
  *
  * @author Windows 7
  */
-public class ClusterSet implements Iterable<Cluster>
+public class ClusterSet implements Iterable<Cluster>, java.io.Serializable
 {
     private Set<Cluster> C;
     
@@ -30,8 +30,10 @@ public class ClusterSet implements Iterable<Cluster>
     {
         String x="";
         Iterator<Cluster> it=C.iterator();
-        while(it.hasNext())
-        	x+=it.next().toString();
+        while(it.hasNext()) {
+            x += it.next().toString();
+            x += '\n';
+        }
         return x;
     }
     

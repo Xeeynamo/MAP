@@ -6,7 +6,7 @@ import java.util.*;
  *
  * @author Windows 7
  */
-public class Tuple 
+public class Tuple implements java.io.Serializable
 {
     private Item [] tuple;
     

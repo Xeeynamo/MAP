@@ -4,7 +4,7 @@ import java.util.*;
 import data.Data;
 import data.Tuple;
 
-public class Cluster implements Iterable<Integer>, Comparable<Cluster>
+public class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.Serializable
 {
 	private Tuple centroid;
 

@@ -1,5 +1,4 @@
-package exception;
-
+package data;
 /**
  *
  * @author Windows 7

@@ -4,7 +4,7 @@ package data;
  *
  * @author Luciano Ciccariello
  */
-public abstract class Attribute {
+public abstract class Attribute implements java.io.Serializable {
     // Nome simbolico
     protected String name;
     // Identificativo numerico

@@ -2,7 +2,7 @@ package data;
 /**
  * Generico oggetto, descritto da l'attributo e valore associati
  */
-public abstract class Item {
+public abstract class Item implements java.io.Serializable {
     Attribute attribute;
     Object value;
 

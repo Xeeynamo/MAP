@@ -1,15 +1,14 @@
 package mining;
 
 import java.util.*;
+import java.io.*;
 import data.Data;
-import exception.ClusteringRadiusException;
-import exception.EmptyDatasetException;
 
 /**
  *
  * @author Windows 7
  */
-public class QTMiner 
+public class QTMiner
 {
     private ClusterSet C;
     private double radius;
@@ -18,6 +17,12 @@ public class QTMiner
     {
         C=new ClusterSet();
         this.radius=radius;
+    }
+    public QTMiner(String fileName) throws IOException, ClassNotFoundException
+    {
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName));
+        C = (ClusterSet)in.readObject();
+        in.close();
     }
     
     public ClusterSet getC()
@@ -60,7 +65,7 @@ public class QTMiner
         2. Salva il candidato cluster più popoloso e rimuove tutti punti di tale cluster dall'elenco delle tuple ancora da clusterizzare
         3. Ritorna al passo 1 finchè ci sono ancora tuple da assegnare ad un cluster
     */
-    public int compute(Data data) throws ClusteringRadiusException,EmptyDatasetException
+    public int compute(Data data) throws ClusteringRadiusException, data.EmptyDatasetException
     {
         int numclusters=0;
         boolean isClustered[]=new boolean[data.getNumberOfExamples()];
@@ -84,7 +89,19 @@ public class QTMiner
             countClustered+=c.getSize();
         }
         if (numclusters==0)
-            throw new EmptyDatasetException();
+            throw new data.EmptyDatasetException();
         return numclusters;
+    }
+
+    public void salva(String fileName) throws IOException
+    {
+        ObjectOutputStream out= new ObjectOutputStream(new FileOutputStream(fileName));
+        out.writeObject(C);
+        out.close();
+    }
+
+    @Override public String toString()
+    {
+        return C.toString();
     }
 }
