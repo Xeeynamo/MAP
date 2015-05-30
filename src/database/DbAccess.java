@@ -13,7 +13,7 @@ import java.sql.SQLException;
  */
 public class DbAccess {
     private String DRIVER_CLASS_NAME = "org.gjt.mm.mysql.Driver";
-    private final String DBMS = "jbdc:mysql";
+    private final String DBMS = "jdbc:mysql";
     private final String SERVER = "localhost";
     private final String DATABASE = "MapDB";
     private final int PORT = 3306;
@@ -24,13 +24,13 @@ public class DbAccess {
     public void initConnection() throws DatabaseConnectionException
     {
         try {
-            Class.forName(DRIVER_CLASS_NAME);
+            //Class.forName(DRIVER_CLASS_NAME);
             String url = DBMS+"://" + SERVER + ":" + PORT + "/" + DATABASE;
-            conn = DriverManager.getConnection(url);
+            conn = DriverManager.getConnection(url,USER_ID,PASSWORD);
 
-        } catch (ClassNotFoundException e) {
+        } /*catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
         catch (SQLException e)
         {
             e.printStackTrace();
