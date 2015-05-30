@@ -90,7 +90,7 @@ public class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.
 			set.add(v);
 			str+="[";
 			for(int j=0;j<data.getNumberOfExplanatoryAttributes();j++)
-				str+=data.getValue(v, j)+" ";
+				str+=data.getAttributeValue(v, j)+" ";
 			str+="] dist="+getCentroid().getDistance(data.getItemSet(v))+"\n";
 		}
 

@@ -1,6 +1,7 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import database.EmptySetException;
 import keyboardinput.Keyboard;
 import mining.ClusteringRadiusException;
 import mining.QTMiner;
@@ -53,7 +54,15 @@ public class MainTest {
                     }
                     break;
                 case 2:
-                    Data data =new Data();
+                    System.out.print("Insert the table's name where to get information:");
+                    Data data = null;
+                    try {
+                        data = new Data(Keyboard.readString());
+                    } catch (EmptySetException e)
+                    {
+                        System.out.println(e.getMessage());
+                        return;
+                    }
                     System.out.println(data);
                     char answer='y';
                     do{

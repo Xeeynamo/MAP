@@ -1,20 +1,38 @@
 package data;
+import database.*;
+
+import java.sql.SQLException;
 import java.util.*;
 
 public class Data {
 
     // matrice NxM dove ogni riga modella una transazione
-    private Object data[][];
+    private List<Example> data;
     // cardinalità dell'insieme di transazioni (numero di righe in data)
     private int numberOfExamples;
 
     private List<Attribute> explanatorySet;
 
 
-    public Data() {
-		this.data=new Object [14][5];
+    public Data(String table) throws EmptySetException{
+		this.data=new ArrayList<Example>();
+		DbAccess db = new DbAccess();
+		TableData td = new TableData(db);
+
+		try {
+			db.initConnection();
+			this.data = td.getDistinctTransazioni(table);
+		} catch (DatabaseConnectionException e) {
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+
+
 		//Outlook
-		this.data[0][0]="Sunny";
+		/*this.data[0][0]="Sunny";
 		this.data[1][0]="Sunny";
 		this.data[2][0]="Overcast";
 		this.data[3][0]="Rain";
@@ -87,7 +105,7 @@ public class Data {
 		this.data[10][4]="Yes";
 		this.data[11][4]="Yes";
 		this.data[12][4]="Yes";
-		this.data[13][4]="No";
+		this.data[13][4]="No";*/
 		
 		this.numberOfExamples=14;
 		explanatorySet = new LinkedList<>();
@@ -126,18 +144,6 @@ public class Data {
     }
 
     
-    /**
-     * Restituisce il valore di una particolare tupla e di un particolare attributo nel data-set
-     * 
-     * @param exampleIndex indice della tupla
-     * @param attributeIndex indice dell'attributo
-     * @return valore indivuato nella tupla di indice <exampleIndex> con attributo di indice
-     * <attributeIndex> 
-     */
-	public Object getValue(int exampleIndex,int attributeIndex)
-	{
-		return data[exampleIndex][attributeIndex];
-	}
 
     /**
      * Ottiene il valore di un dato
@@ -147,7 +153,7 @@ public class Data {
      * @return valore restituito
      */
 	public Object getAttributeValue(int exampleIndex, int attributeIndex) {
-        return data[exampleIndex][attributeIndex];
+        return data.get(exampleIndex).get(attributeIndex);
     }
 
     /**
@@ -187,8 +193,8 @@ public class Data {
                 {
 			value+=(i+1)+":";
 			for(int j = 0; j < getNumberOfExplanatoryAttributes() -1 ; j++)
-				value+=this.getValue(i, j)+",";
-			value+=this.getValue(i, getNumberOfExplanatoryAttributes()-1)+"\n";
+				value+=this.getAttributeValue(i, j)+",";
+			value+=this.getAttributeValue(i, getNumberOfExplanatoryAttributes() - 1)+"\n";
 		}
 		return value;
 	}
@@ -199,9 +205,9 @@ public class Data {
         for(int i=0;i<getNumberOfExplanatoryAttributes();i++)
         {
         	if(DiscreteAttribute.class.isInstance(getAttribute(i)))
-        		tuple.add(new DiscreteItem((DiscreteAttribute)getAttribute(i),(String)data[index][i]),i);
+        		tuple.add(new DiscreteItem((DiscreteAttribute)getAttribute(i),(String)data.get(index).get(i)),i);
         	else
-        		tuple.add(new ContinuousItem((ContinuousAttribute)getAttribute(i),(double)data[index][i]),i);
+        		tuple.add(new ContinuousItem((ContinuousAttribute)getAttribute(i),(double)data.get(index).get(i)),i);
         }
         return tuple;
     }
