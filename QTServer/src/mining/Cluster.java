@@ -89,7 +89,7 @@ public class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.
         for (int i = 0; i < centroid.getLenght(); i++)
             str += centroid.get(i) + " ";
         str += ")\nExamples:\n";
-        
+
         Iterator<Integer> array = iterator();
         HashSet<Integer> set = new HashSet<Integer>();
         for (Iterator<Integer> i = iterator(); i.hasNext(); ) {
