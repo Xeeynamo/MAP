@@ -1,19 +1,17 @@
 package database;
 
 /**
- * Created by Luciano on 30/05/15.
+ * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class NoValueException extends Exception {
 
     private String message;
 
-    public NoValueException(String message)
-    {
+    public NoValueException(String message) {
         this.message = message;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return this.message;
     }
 }

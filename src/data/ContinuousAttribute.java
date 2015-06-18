@@ -1,8 +1,9 @@
 package data;
+
 /**
  * Rappresentazione di un attributo contenente valori continui
  *
- * @author studente
+ * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class ContinuousAttribute extends Attribute {
 
@@ -30,10 +31,10 @@ public class ContinuousAttribute extends Attribute {
      * parametro passato in input. La normalizzazione ha
      * come codominio l'intervallo [0, 1].
      *
-     * @param valore dell'attributo da normalizzare
+     * @param value valore dell'attributo da normalizzare
      * @return valore normalizzato
      */
-    double getScaledValue(double v) {
-        return (v - min) / (max - min);
+    double getScaledValue(double value) {
+        return (value - min) / (max - min);
     }
 }

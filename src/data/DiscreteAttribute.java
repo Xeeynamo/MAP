@@ -1,11 +1,12 @@
 package data;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
  * Rappresentazione di un attributo contenente valori discreti
  *
- * @author studente
+ * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class DiscreteAttribute extends Attribute implements Iterable {
     // per ogni stringa si ha un valore del dominio discreto.
@@ -47,9 +48,7 @@ public class DiscreteAttribute extends Attribute implements Iterable {
     /*public String getValue(int i) {
         return values[i];
     }*/
-
-    public Iterator<String> iterator()
-    {
+    public Iterator<String> iterator() {
         return values.iterator();
     }
 }

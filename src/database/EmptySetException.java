@@ -1,19 +1,19 @@
 package database;
 
 /**
- * Created by Luciano on 30/05/15.
+ * Restituisce un'eccezione nel caso il result set sia vuoto.
+ *
+ * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class EmptySetException extends Exception {
 
     private String message;
 
-    public EmptySetException(String message)
-    {
+    public EmptySetException(String message) {
         this.message = message;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return this.message;
     }
 }

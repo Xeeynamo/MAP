@@ -1,10 +1,12 @@
 package data;
+
 /**
  * Generico attributo
  *
- * @author Luciano Ciccariello
+ * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public abstract class Attribute implements java.io.Serializable {
+
     // Nome simbolico
     protected String name;
     // Identificativo numerico
