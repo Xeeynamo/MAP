@@ -1,5 +1,7 @@
 package utility;
 
+import mining.QTMiner;
+
 import java.net.*;
 import java.io.*;
 import java.io.IOException;
@@ -29,10 +31,41 @@ public class ServerOneClient extends Thread {
     public void run()
     {
         try {
-            InputStreamReader inStreamReader = new InputStreamReader(socket.getInputStream());
-
+            BufferedInputStream inStream = new BufferedInputStream(socket.getInputStream());
+            int program = inStream.read();
+            switch (program)
+            {
+                case 1:
+                    learningFromFile(socket);
+                    break;
+                case 2:
+                    learningFromDb(socket);
+                    break;
+            }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public String readString(BufferedInputStream stream) throws IOException
+    {
+        byte[] contents = new byte[1024];
+        int bytesRead = 0;
+        String ret = "";
+
+        while( (bytesRead = stream.read(contents)) != -1){
+            ret = new String(contents, 0, bytesRead);
+        }
+        return ret;
+    }
+    public void learningFromFile(Socket socket) throws IOException
+    {
+        BufferedInputStream inStream = new BufferedInputStream(socket.getInputStream());
+        String fileName = readString(inStream);
+        //new QTMiner(fileName + ".dmp");
+    }
+    public void learningFromDb(Socket socket)
+    {
+
     }
 }
