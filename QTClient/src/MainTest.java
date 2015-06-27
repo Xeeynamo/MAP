@@ -48,12 +48,6 @@ public class MainTest {
         System.out.print("Table Name:");
         String tabName = Keyboard.readString();
         out.writeObject(tabName);
-        double r = 1.0;
-        do {
-            System.out.print("Radius:");
-            r = Keyboard.readDouble();
-        } while (r <= 0);
-        out.writeObject(r);
         String result = (String) in.readObject();
         if (result.equals("OK"))
             return (String) in.readObject();

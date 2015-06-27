@@ -35,14 +35,19 @@ public class ServerOneClient extends Thread {
             int program = inStream.read();
             switch (program)
             {
-                case 1:
-                    learningFromFile(socket);
+                case 0: // STORE TABLE FROM DD
                     break;
-                case 2:
+                case 1: // LEARNING FROM DB
                     learningFromDb(socket);
                     break;
+                case 2: // STORE CLUSTER IN FILE
+                    learningFromDb(socket);
+                    break;
+                case 3: // LEARNING FROM FILE
+                    learningFromFile(socket);
+                    break;
             }
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -58,11 +63,21 @@ public class ServerOneClient extends Thread {
         }
         return ret;
     }
-    public void learningFromFile(Socket socket) throws IOException
+    public void learningFromFile(Socket socket) throws IOException, ClassNotFoundException
     {
-        BufferedInputStream inStream = new BufferedInputStream(socket.getInputStream());
-        String fileName = readString(inStream);
-        //new QTMiner(fileName + ".dmp");
+        ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
+        ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream());
+        String fileName = (String)inStream.readObject();
+        try
+        {
+            String result = new QTMiner(fileName + ".dmp").toString();
+            outStream.writeObject("OK");
+            outStream.writeObject(result);
+        }
+        catch (Exception e)
+        {
+            outStream.writeObject("BAD");
+        }
     }
     public void learningFromDb(Socket socket)
     {
