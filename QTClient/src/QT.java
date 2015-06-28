@@ -4,6 +4,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Arc2D;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -129,6 +130,8 @@ public class QT extends JApplet {
 		private void learningFromDBAction() throws SocketException, IOException, ClassNotFoundException {
 
 			double radius;
+			String table, result;
+
 			try{
 				radius = new Double(panelDB.parameterText.getText()).doubleValue();
 				if (radius<=0)
@@ -139,13 +142,70 @@ public class QT extends JApplet {
 				return;
 			}
 
+			table = panelDB.tableText.getText();
+
+			out.writeObject(0);
+			out.writeObject(table);
+
+			result = (String)in.readObject();
+
+			if(result == "OK")
+			{
+				out.writeObject(1);
+				out.writeObject(radius);
+
+				result = (String)in.readObject();
+
+				if(result == "OK")
+				{
+					//Reading amount of clusters and showing them on JTextArea
+					panelDB.clusterOutput.setText( "Number of clusters :" + in.readObject() + "\n" + in.readObject());
+
+
+					out.writeObject(2);
+
+					result = (String)in.readObject();
+
+					if(result == "OK")
+						JOptionPane.showMessageDialog(this,"Success!!");
+					else
+						JOptionPane.showMessageDialog(this,"Error! :(");
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(this,"Error: little radius?");
+					return;
+				}
+
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(this, "Error: wrong table name?");
+				return;
+			}
+
+
+
 		}
 
 
 		private void learningFromFileAction() throws SocketException, IOException, ClassNotFoundException {
 
 
-			//to be defined
+			String table = panelFile.tableText.getText();
+			double radius = Double.parseDouble(panelFile.parameterText.getText());
+
+			out.writeObject(3);
+			out.writeObject(table);
+			out.writeObject(radius);
+
+			String result = (String)in.readObject();
+			if(result == "OK")
+				JOptionPane.showMessageDialog(this,"Success!!");
+			else
+				JOptionPane.showMessageDialog(this,"Error: something went wrong");
+
+
 
 		}
 
@@ -163,7 +223,7 @@ public class QT extends JApplet {
 
 		int port = new Integer(getParameter("Port")).intValue();
 
-		/*try {
+		try {
 			InetAddress addr = InetAddress.getByName(ip); //ip
 			System.out.println("addr = " + addr);
 			Socket socket = new Socket(addr, port); //Port
@@ -175,7 +235,7 @@ public class QT extends JApplet {
 
 
 			System.exit(0);
-		}*/
+		}
 
 	}
 }
