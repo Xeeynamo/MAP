@@ -11,6 +11,9 @@ import java.net.SocketException;
 
 public class QT extends JApplet {
 
+	private static String DEFAULT_HOST = "localhost";
+	private static int DEFAULT_PORT = 8080;
+
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 
@@ -211,24 +214,41 @@ public class QT extends JApplet {
 	}
 
 	public void init() {
-
-
 		TabbedPane tab = new TabbedPane();
 		getContentPane().setLayout(new GridLayout(1, 1));
 		getContentPane().add(tab);
 
-		String ip = getParameter("ServerIP");
+		String strHost = getParameter("ServerIP");
+		String strPort = getParameter("Port");
+		int port;
 
-		int port = new Integer(getParameter("Port")).intValue();
+		if (strHost == null) { // se non è specificato alcun indirizzo IP
+			strHost = DEFAULT_HOST; // allora ne imposta uno di default
+		}
+
+		if (strPort == null) { // se non è specificata la porta
+			port = DEFAULT_PORT; // allora imposta la porta di default
+		}
+		else
+		{
+			// altrimenti la processa dal parametro
+			try {
+				port = Integer.parseInt(strPort);
+			} catch (NumberFormatException e) {
+				// se il parametro è un formato differente da un numero
+				// allora imposta la porta come da default
+				port = DEFAULT_PORT;
+			}
+		}
 
 		try {
-			InetAddress addr = InetAddress.getByName(ip); //ip
+			InetAddress addr = InetAddress.getByName(strHost); //ip
 			System.out.println("addr = " + addr);
 			Socket socket = new Socket(addr, port); //Port
 			System.out.println(socket);
 
-			 out = new ObjectOutputStream(socket.getOutputStream());
-			 in = new ObjectInputStream(socket.getInputStream());
+			out = new ObjectOutputStream(socket.getOutputStream());
+			in = new ObjectInputStream(socket.getInputStream());
 		} catch (IOException e) {
 
 
