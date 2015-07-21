@@ -49,7 +49,7 @@ public class MultiServer {
                 System.out.println("Waiting for an incoming connection...");
                 Socket s = serverSocket.accept();
                 System.out.println("Client connected!" + s.toString());
-                new ServerOneClient(s).run();
+                new ServerOneClient(s);
             }
             catch (java.net.UnknownHostException e)
             {

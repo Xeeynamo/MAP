@@ -23,6 +23,9 @@ public class ServerOneClient extends Thread {
     public ServerOneClient(Socket s) throws IOException
     {
         socket = s;
+        in = new ObjectInputStream(socket.getInputStream());
+        out = new ObjectOutputStream(socket.getOutputStream());
+        this.start();
     }
 
     /**
@@ -31,12 +34,12 @@ public class ServerOneClient extends Thread {
     public void run()
     {
         try {
-            BufferedInputStream inStream = new BufferedInputStream(socket.getInputStream());
-            int program = inStream.read();
+            //BufferedInputStream inStream = new BufferedInputStream(socket.getInputStream());
+            int program = in.readInt();
             switch (program)
             {
-                case 0: // STORE TABLE FROM DD
-                    break;
+                case 0: // STORE TABLE FROM DB
+                    break; //To do : check table existence.
                 case 1: // LEARNING FROM DB
                     learningFromDb(socket);
                     break;
@@ -65,18 +68,18 @@ public class ServerOneClient extends Thread {
     }
     public void learningFromFile(Socket socket) throws IOException, ClassNotFoundException
     {
-        ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
-        ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream());
-        String fileName = (String)inStream.readObject();
+        //ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
+        //ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream());
+        String fileName = (String)in.readObject();
         try
         {
             String result = new QTMiner(fileName + ".dmp").toString();
-            outStream.writeObject("OK");
-            outStream.writeObject(result);
+            out.writeObject("OK");
+            out.writeObject(result);
         }
         catch (Exception e)
         {
-            outStream.writeObject("BAD");
+            out.writeObject("BAD");
         }
     }
     public void learningFromDb(Socket socket)
