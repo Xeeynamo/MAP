@@ -69,7 +69,7 @@ public class ServerOneClient extends Thread {
         } catch (IOException | ClassNotFoundException e) {
             //System.out.println(e.getMessage());
         	try {
-				out.writeObject(e.getMessage());
+				writeObject(socket,e.getMessage());
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				System.out.println(e1.getMessage());
