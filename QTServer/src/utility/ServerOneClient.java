@@ -91,7 +91,7 @@ public class ServerOneClient extends Thread {
                 System.out.println(e.getMessage());
                 break;
             }
-    	}
+        }
     }
 
     /**
