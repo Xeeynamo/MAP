@@ -1,10 +1,13 @@
 package utility;
 
+import data.Data;
+import data.EmptyDatasetException;
+import database.EmptySetException;
+import mining.ClusteringRadiusException;
 import mining.QTMiner;
 
 import java.net.*;
 import java.io.*;
-import java.io.IOException;
 
 /**
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
@@ -85,8 +88,51 @@ public class ServerOneClient extends Thread {
             out.writeObject("BAD");
         }
     }
-    public void learningFromDb(Socket socket)
+    public boolean learningFromDb(Socket socket)
     {
-
+    	Object o;
+    	try {
+			o = in.readObject();
+			if (o instanceof String)
+			{
+				String tableName = (String)o;
+				try {
+					Data data = new Data(tableName);
+					out.writeObject("OK");
+					o = in.readObject();
+					if (o instanceof Double)
+					{
+						double radius = (Double)o;
+						if (radius <= 0.0)
+							out.writeObject("Radius must be greater than 0.");
+						else
+						{
+	                        QTMiner qt = new QTMiner(radius);
+                            try {
+								int numC = qt.compute(data);
+								out.writeObject("OK");
+								out.writeObject(new Integer(numC));
+								out.writeObject(qt.getC().toString(data));
+							} catch (ClusteringRadiusException e) {
+								out.writeObject("An invalid radius value was specified.");
+							} catch (EmptyDatasetException e) {
+								out.writeObject("Dataset is empty.");
+							}
+						}
+					}
+					else
+						out.writeObject("Expected a decimal value greater than 0.");
+				} catch (EmptySetException e) {
+					out.writeObject("Table " + tableName + " empty or not found.");
+				}
+			}
+			else
+				out.writeObject("Expected the name of table to process.");
+		} catch (ClassNotFoundException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
+    	return true;
     }
 }

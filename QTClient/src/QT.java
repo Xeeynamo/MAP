@@ -126,39 +126,21 @@ public class QT extends JApplet {
 
 			result = (String)in.readObject();
 
-			if(result == "OK")
-			{
-				out.writeObject(1);
-				out.writeObject(radius);
-
+			if(result.compareTo("OK") == 0) {
+				out.writeObject(new Double(radius));
 				result = (String)in.readObject();
 
-				if(result == "OK")
-				{
+				if(result == "OK") {
 					//Reading amount of clusters and showing them on JTextArea
-					panelDB.clusterOutput.setText( "Number of clusters :" + in.readObject() + "\n" + in.readObject());
-
-
-					out.writeObject(2);
-
-					result = (String)in.readObject();
-
-					if(result == "OK")
-						JOptionPane.showMessageDialog(this,"Success!!");
-					else
-						JOptionPane.showMessageDialog(this,"Error! :(");
+					panelDB.clusterOutput.setText( "Number of clusters :" + (Integer)in.readObject() + "\n" + (String)in.readObject());
 				}
-				else
-				{
-					JOptionPane.showMessageDialog(this,"Error: little radius?");
-					return;
+				else {
+					JOptionPane.showMessageDialog(this, result, "Error", JOptionPane.ERROR_MESSAGE);
 				}
 
 			}
-			else
-			{
-				JOptionPane.showMessageDialog(this, "Error: wrong table name?");
-				return;
+			else {
+				JOptionPane.showMessageDialog(this, result, "Error", JOptionPane.ERROR_MESSAGE);
 			}
 
 
