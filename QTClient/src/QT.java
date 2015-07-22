@@ -51,18 +51,10 @@ public class QT extends JApplet {
 
 				String result = (String)readObject(socket);
 				if(result.compareTo("OK") == 0) {
-<<<<<<< HEAD
-					writeObject(new Double(radius));
-					result = (String)readObject();
-
-					if(result.compareTo("OK") == 0) {
-						return "Number of clusters :" + (Integer)readObject() + "\n" + (String)readObject();
-=======
 					writeObject(socket, new Double(radius));
 					result = (String)readObject(socket);
 					if(result.compareTo("OK") == 0) {
 						return "Number of clusters :" + (Integer)readObject(socket) + "\n" + (String)readObject(socket);
->>>>>>> origin/master
 					}
 					else {
 						JOptionPane.showMessageDialog(null, result, "Error", JOptionPane.ERROR_MESSAGE);
