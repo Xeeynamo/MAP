@@ -3,11 +3,11 @@ package database;
 /**
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
-public class NoValueException extends Exception {
+class NoValueException extends Exception {
 
     private String message;
 
-    public NoValueException(String message) {
+    NoValueException(String message) {
         this.message = message;
     }
 

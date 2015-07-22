@@ -16,7 +16,7 @@ import java.util.TreeSet;
  */
 public class TableData {
 
-    DbAccess db;
+    private DbAccess db;
 
     /**
      * Inizializzazione
@@ -142,6 +142,4 @@ public class TableData {
         return value;
 
     }
-
-
 }

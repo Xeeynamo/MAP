@@ -6,7 +6,7 @@ package database;
 public class DatabaseConnectionException extends Exception {
     private String message;
 
-    public DatabaseConnectionException(String message) {
+    DatabaseConnectionException(String message) {
         this.message = message;
     }
 

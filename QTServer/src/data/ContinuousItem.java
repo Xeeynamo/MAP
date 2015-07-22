@@ -5,7 +5,7 @@ package data;
  *
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
-public class ContinuousItem extends Item {
+class ContinuousItem extends Item {
     ContinuousItem(ContinuousAttribute attribute, Double value) {
         super(attribute, value);
     }

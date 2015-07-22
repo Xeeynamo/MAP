@@ -5,7 +5,7 @@ package data;
  *
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
-public abstract class Item implements java.io.Serializable {
+abstract class Item implements java.io.Serializable {
     Attribute attribute;
     Object value;
 
@@ -15,7 +15,7 @@ public abstract class Item implements java.io.Serializable {
      * @param attribute attributo dell'oggetto
      * @param value     valore dell'oggetto
      */
-    public Item(Attribute attribute, Object value) {
+    Item(Attribute attribute, Object value) {
         this.attribute = attribute;
         this.value = value;
     }

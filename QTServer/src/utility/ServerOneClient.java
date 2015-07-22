@@ -13,7 +13,7 @@ import java.io.*;
  * Classe che gestisce una singola connessione da parte di un client
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
-public class ServerOneClient extends Thread {
+class ServerOneClient extends Thread {
     private Socket socket;
     private mining.QTMiner kmeans;
 
@@ -22,7 +22,7 @@ public class ServerOneClient extends Thread {
      * @param s
      * @throws IOException
      */
-    public ServerOneClient(Socket s) throws IOException {
+    ServerOneClient(Socket s) throws IOException {
         socket = s;
     }
 
@@ -100,7 +100,7 @@ public class ServerOneClient extends Thread {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void learningFromFile(Socket socket) throws IOException, ClassNotFoundException
+    private void learningFromFile(Socket socket) throws IOException, ClassNotFoundException
     {
         String tableName = (String)readObject(socket);
 		double radius = (Double)readObject(socket);
@@ -125,7 +125,7 @@ public class ServerOneClient extends Thread {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public boolean learningFromDb(Socket socket)
+    private boolean learningFromDb(Socket socket)
     {
     	Object o;
     	try {

@@ -8,7 +8,7 @@ import java.util.TreeSet;
  *
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
-public class DiscreteAttribute extends Attribute implements Iterable {
+class DiscreteAttribute extends Attribute implements Iterable {
     // per ogni stringa si ha un valore del dominio discreto.
     // I valori del dominio sono memorizzati in values seguendo
     // un ordine lessicografico
@@ -22,7 +22,7 @@ public class DiscreteAttribute extends Attribute implements Iterable {
      * @param index  identificativo dell'attributo
      * @param values dominio dell'attributo
      */
-    public DiscreteAttribute(String name, int index, String values[]) {
+    DiscreteAttribute(String name, int index, String values[]) {
         super(name, index);
         //this.values = values;
         this.values = new TreeSet<>();

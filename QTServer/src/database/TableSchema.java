@@ -11,12 +11,10 @@ import java.util.List;
 /**
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
-public class TableSchema {
-    DbAccess db;
-    List<Column> tableSchema = new ArrayList<Column>();
+class TableSchema {
+    private List<Column> tableSchema = new ArrayList<Column>();
 
-    public TableSchema(DbAccess db, String tableName) throws SQLException {
-        this.db = db;
+    TableSchema(DbAccess db, String tableName) throws SQLException {
         HashMap<String, String> mapSQL_JAVATypes = new HashMap<String, String>();
         //http://java.sun.com/j2se/1.3/docs/guide/jdbc/getstart/mapping.html
         mapSQL_JAVATypes.put("CHAR", "string");
@@ -45,23 +43,21 @@ public class TableSchema {
 
         }
         res.close();
-
-
     }
 
     public int getNumberOfAttributes() {
         return tableSchema.size();
     }
 
-    public Column getColumn(int index) {
+    Column getColumn(int index) {
         return tableSchema.get(index);
     }
 
-    public class Column {
+    class Column {
         private String name;
         private String type;
 
-        Column(String name, String type) {
+        private Column(String name, String type) {
             this.name = name;
             this.type = type;
         }

@@ -6,7 +6,7 @@ package mining;
 public class ClusteringRadiusException extends Exception {
     private int ntuples;
 
-    public ClusteringRadiusException(int ntuples) {
+    ClusteringRadiusException(int ntuples) {
         this.ntuples = ntuples;
     }
 

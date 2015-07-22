@@ -15,7 +15,7 @@ public class Example implements Comparable<Example> {
      * Aggiunge un oggetto al campione corrente
      * @param o oggetto da aggiungere
      */
-    public void add(Object o) {
+    void add(Object o) {
         example.add(o);
     }
 

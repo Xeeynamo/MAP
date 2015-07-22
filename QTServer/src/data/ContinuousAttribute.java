@@ -5,7 +5,7 @@ package data;
  *
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
-public class ContinuousAttribute extends Attribute {
+class ContinuousAttribute extends Attribute {
 
     // definizioni estremi dell'intervallo di valori
     private double max;
@@ -20,7 +20,7 @@ public class ContinuousAttribute extends Attribute {
      * @param min   minimo valore che si può assumere
      * @param max   massimo valore che si può assumere
      */
-    public ContinuousAttribute(String name, int index, double min, double max) {
+    ContinuousAttribute(String name, int index, double min, double max) {
         super(name, index);
         this.min = min;
         this.max = max;

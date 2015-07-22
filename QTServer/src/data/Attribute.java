@@ -5,12 +5,12 @@ package data;
  *
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
-public abstract class Attribute implements java.io.Serializable {
+abstract class Attribute implements java.io.Serializable {
 
     // Nome simbolico
-    protected String name;
+	private String name;
     // Identificativo numerico
-    protected int index;
+	private int index;
 
     /**
      * Inizializza un attributo
@@ -18,7 +18,7 @@ public abstract class Attribute implements java.io.Serializable {
      * @param name  nome dell'attributo
      * @param index identificativo dell'attributo
      */
-    public Attribute(String name, int index) {
+    Attribute(String name, int index) {
         this.name = name;
         this.index = index;
     }

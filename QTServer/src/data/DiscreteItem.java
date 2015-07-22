@@ -3,9 +3,9 @@ package data;
 /**
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
-public class DiscreteItem extends Item {
+class DiscreteItem extends Item {
 
-    public DiscreteItem(DiscreteAttribute attribute, String value) {
+    DiscreteItem(DiscreteAttribute attribute, String value) {
         super(attribute, value);
     }
 

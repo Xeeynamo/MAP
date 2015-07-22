@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
-public class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.Serializable {
+class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.Serializable {
     private Tuple centroid;
 
     //private ArraySet clusteredData;
@@ -20,7 +20,7 @@ public class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.
 
 	}*/
 
-    public Cluster(Tuple centroid) {
+    Cluster(Tuple centroid) {
         this.centroid = centroid;
         clusteredData = new HashSet<>();
 
@@ -87,7 +87,7 @@ public class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.
 
     }
 
-    public String toString(Data data) {
+    String toString(Data data) {
         String str = "Centroid=(";
         for (int i = 0; i < centroid.getLenght(); i++)
             str += centroid.get(i) + " ";
