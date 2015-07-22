@@ -13,12 +13,58 @@ public class QT extends JApplet {
 
 	private static String DEFAULT_HOST = "localhost";
 	private static int DEFAULT_PORT = 8080;
+	public static IAsyncResponsive ResponsiveInterface;
 
-	private ObjectOutputStream out;
-	private ObjectInputStream in;
+	private Socket socket = null;
 
-	private class TabbedPane extends JPanel {
+	private class AsyncLearningFromDatabaseRequest extends AsyncClass {
+		Socket socket;
+		private String table;
+		private double radius;
+		public AsyncLearningFromDatabaseRequest(IAsyncResponsive responsive, Socket socket, String tableName, double radius) {
+			super(responsive);
+			this.socket = socket;
+			this.table = tableName;
+			this.radius = radius;
+		}
+		@Override public Object runasync() {
+			String result;
 
+			if (radius<=0)
+				throw new NumberFormatException("Radius<=0");
+
+			try
+			{
+				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+				out.writeObject(new Integer(1));
+				out.writeObject(table);
+
+				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+				result = (String)in.readObject();
+
+				if(result.compareTo("OK") == 0) {
+					out.writeObject(new Double(radius));
+					result = (String)in.readObject();
+
+					if(result == "OK") {
+						return "Number of clusters :" + (Integer)in.readObject() + "\n" + (String)in.readObject();
+					}
+					else {
+						JOptionPane.showMessageDialog(null, result, "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else {
+					JOptionPane.showMessageDialog(null, result, "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (IOException e) {
+
+			} catch (ClassNotFoundException e) {
+
+			}
+			return "Error";
+		}
+	}
+	private class TabbedPane extends JPanel implements IAsyncResponsive {
 		private JPanelCluster panelDB;
 		private JPanelCluster panelFile;
 
@@ -75,11 +121,10 @@ public class QT extends JApplet {
 			ImageIcon iconDB = new ImageIcon(imgURL);
 			 panelDB = new JPanelCluster("MINE", new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						learningFromDBAction();
-					} catch (IOException | ClassNotFoundException e1) {
-						System.out.println(e1);
-					}
+					String table = panelDB.tableText.getText();
+					double radius = new Double(panelDB.parameterText.getText()).doubleValue();
+					new AsyncLearningFromDatabaseRequest(ResponsiveInterface, socket, table, radius).start();
+					return;
 				}
 			});
 			tabbedPane.addTab("DB", iconDB, panelDB,
@@ -104,54 +149,20 @@ public class QT extends JApplet {
 			tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		}
 
-		private void learningFromDBAction() throws SocketException, IOException, ClassNotFoundException {
-
-			double radius;
-			String table, result;
-
-			try{
-				radius = new Double(panelDB.parameterText.getText()).doubleValue();
-				if (radius<=0)
-					throw new NumberFormatException("Radius<=0");
-			}
-			catch(NumberFormatException e){
-				JOptionPane.showMessageDialog(this,e.toString());
-				return;
-			}
-
-			table = panelDB.tableText.getText();
-
-			out.writeObject(new Integer(1));
-			out.writeObject(table);
-
-			result = (String)in.readObject();
-
-			if(result.compareTo("OK") == 0) {
-				out.writeObject(new Double(radius));
-				result = (String)in.readObject();
-
-				if(result == "OK") {
-					//Reading amount of clusters and showing them on JTextArea
-					panelDB.clusterOutput.setText( "Number of clusters :" + (Integer)in.readObject() + "\n" + (String)in.readObject());
-				}
-				else {
-					JOptionPane.showMessageDialog(this, result, "Error", JOptionPane.ERROR_MESSAGE);
-				}
-
-			}
-			else {
-				JOptionPane.showMessageDialog(this, result, "Error", JOptionPane.ERROR_MESSAGE);
-			}
-
-
-
+		@Override public void asyncStart(AsyncClass o)
+		{
+			panelDB.clusterOutput.setText("Processing the server...");
 		}
-
-
+		@Override public void asyncEnd(AsyncClass o, Object result)
+		{
+			if (o instanceof AsyncLearningFromDatabaseRequest)
+			{
+				if (result != null)
+					panelDB.clusterOutput.setText((String)result);
+			}
+		}
 		private void learningFromFileAction() throws SocketException, IOException, ClassNotFoundException {
-
-
-			String table = panelFile.tableText.getText();
+			/*String table = panelFile.tableText.getText();
 			double radius = Double.parseDouble(panelFile.parameterText.getText());
 
 			out.writeObject(3);
@@ -162,13 +173,8 @@ public class QT extends JApplet {
 			if(result == "OK")
 				JOptionPane.showMessageDialog(this,"Success!!");
 			else
-				JOptionPane.showMessageDialog(this,"Error: something went wrong");
-
-
-
+				JOptionPane.showMessageDialog(this,"Error: something went wrong"*/
 		}
-
-
 	}
 
 	public void init() {
@@ -196,17 +202,15 @@ public class QT extends JApplet {
 		}
 
 		try {
-			InetAddress addr = InetAddress.getByName(strHost); //ip
-			System.out.println("addr = " + addr);
-			Socket socket = new Socket(addr, port); //Port
-			System.out.println(socket);
-
-			out = new ObjectOutputStream(socket.getOutputStream());
-			in = new ObjectInputStream(socket.getInputStream());
+			InetAddress addr = InetAddress.getByName(strHost); // ottiene l'indirizzo dell'host specificato
+			System.out.println("Connecting to " + addr + "...");
+			socket = new Socket(addr, port); // prova a connetters
+			System.out.println("Success! Connected to " + socket);
 
 			TabbedPane tab = new TabbedPane();
 			getContentPane().setLayout(new GridLayout(1, 1));
 			getContentPane().add(tab);
+			ResponsiveInterface = tab;
 
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Unable to connect to " + strHost + ":" + port + ".\n" + e.getMessage(),
