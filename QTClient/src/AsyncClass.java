@@ -1,5 +1,5 @@
-public abstract class AsyncClass extends Thread {
-    protected IAsyncResponsive asyncResponse = null;
+abstract class AsyncClass extends Thread {
+    private IAsyncResponsive asyncResponse = null;
 
     AsyncClass(IAsyncResponsive response)
     {

@@ -13,7 +13,7 @@ public class QT extends JApplet {
 
 	private static String DEFAULT_HOST = "localhost";
 	private static int DEFAULT_PORT = 8080;
-	public static IAsyncResponsive ResponsiveInterface;
+	private static IAsyncResponsive ResponsiveInterface;
 
 	private Socket socket = null;
 
