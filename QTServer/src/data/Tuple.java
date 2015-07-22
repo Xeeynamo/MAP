@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
+ * Classe che contiene un insieme di oggetti formanti una singola tupla
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class Tuple implements java.io.Serializable {

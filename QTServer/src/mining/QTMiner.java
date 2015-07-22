@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.Iterator;
 
 /**
+ * Classe che permette il mining e l'elaborazione dei dati forniti
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class QTMiner {

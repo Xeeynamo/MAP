@@ -30,8 +30,8 @@ public class TableData {
      * Ottiene il nome degli attributi
      * @param table nome della tabella la quale bisogna estrarre le informazioni
      * @return lista di campioni estratti
-     * @throws SQLException
-     * @throws EmptySetException
+     * @throws SQLException se la connessione col database fallisce
+     * @throws EmptySetException se il result set è vuoto
      */
     public List<Example> getDistinctTransazioni(String table) throws SQLException, EmptySetException {
         LinkedList<Example> transSet = new LinkedList<Example>();
@@ -78,7 +78,7 @@ public class TableData {
      * @param table tabella la quale estrarre le informazioni
      * @param column colonna da specificare
      * @return insieme di oggetti
-     * @throws SQLException
+     * @throws SQLException se la connessione col database fallisce
      */
     public Set<Object> getDistinctColumnValues(String table, Column column) throws SQLException {
         Set<Object> valueSet = new TreeSet<Object>();

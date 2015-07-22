@@ -40,14 +40,9 @@ class DiscreteAttribute extends Attribute implements Iterable {
     }
 
     /**
-     * Restituisce values[i]
-     *
-     * @param indice di values
-     * @return stringa contenuta nell'indice i di values
+     * Ottiene un iteratore adatto ad enumerare le stringhe contenute
+     * presenti nell'insieme
      */
-    /*public String getValue(int i) {
-        return values[i];
-    }*/
     public Iterator<String> iterator() {
         return values.iterator();
     }

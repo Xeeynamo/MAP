@@ -122,8 +122,6 @@ class ServerOneClient extends Thread {
     /**
      * Si occupa di leggere il set dal database e di inviarlo al client
      * @param socket del client
-     * @throws IOException
-     * @throws ClassNotFoundException
      */
     private boolean learningFromDb(Socket socket)
     {

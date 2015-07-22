@@ -1,6 +1,7 @@
 package mining;
 
 /**
+ * Lanciata quando il valore radius specificato non è corretto
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class ClusteringRadiusException extends Exception {

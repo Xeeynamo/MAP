@@ -1,6 +1,7 @@
 package data;
 
 /**
+ * Oggetto contenente dei valori discreti
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 class DiscreteItem extends Item {

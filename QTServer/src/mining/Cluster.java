@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
+ * Singolo cluster, gestisce l'insieme di valori e tuple
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.Serializable {

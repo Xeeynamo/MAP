@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Contenitore di informazioni
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class Data {

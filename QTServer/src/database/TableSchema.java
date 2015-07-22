@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * Si occupa di tipizzare i tipi dal formato usato dal database al java
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 class TableSchema {

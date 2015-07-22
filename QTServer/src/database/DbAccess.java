@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
+ * Si occupa della gestione della comunicazione tra il server ed il database
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class DbAccess {
