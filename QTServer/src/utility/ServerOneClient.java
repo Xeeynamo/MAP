@@ -35,20 +35,23 @@ public class ServerOneClient extends Thread {
     {
         try {
             //BufferedInputStream inStream = new BufferedInputStream(socket.getInputStream());
-            int program = in.readInt();
-            switch (program)
+            Object o = in.readObject();
+            if (o instanceof Integer)
             {
-                case 0: // STORE TABLE FROM DB
-                    break; //To do : check table existence.
-                case 1: // LEARNING FROM DB
-                    learningFromDb(socket);
-                    break;
-                case 2: // STORE CLUSTER IN FILE
-                    learningFromDb(socket);
-                    break;
-                case 3: // LEARNING FROM FILE
-                    learningFromFile(socket);
-                    break;
+                switch ((Integer)o)
+                {
+                    case 0: // STORE TABLE FROM DB
+                        break; //To do : check table existence.
+                    case 1: // LEARNING FROM DB
+                        learningFromDb(socket);
+                        break;
+                    case 2: // STORE CLUSTER IN FILE
+                        learningFromDb(socket);
+                        break;
+                    case 3: // LEARNING FROM FILE
+                        learningFromFile(socket);
+                        break;
+                }
             }
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(e.getMessage());

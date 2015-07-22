@@ -77,21 +77,9 @@ public class QT extends JApplet {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						learningFromDBAction();
-					} catch (SocketException e1) {
+					} catch (IOException | ClassNotFoundException e1) {
 						System.out.println(e1);
-
-					} catch (FileNotFoundException e1) {
-						System.out.println(e1);
-
-					} catch (IOException e1) {
-						System.out.println(e1);
-
-					} catch (ClassNotFoundException e1) {
-						System.out.println(e1);
-
 					}
-
-
 				}
 			});
 			tabbedPane.addTab("DB", iconDB, panelDB,
@@ -103,21 +91,9 @@ public class QT extends JApplet {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						learningFromFileAction();
-					} catch (SocketException e1) {
+					} catch (IOException | ClassNotFoundException e1) {
 						System.out.println(e1);
-
-					} catch (FileNotFoundException e1) {
-						System.out.println(e1);
-
-					} catch (IOException e1) {
-						System.out.println(e1);
-
-					} catch (ClassNotFoundException e1) {
-						System.out.println(e1);
-
 					}
-
-
 				}
 			});
 			tabbedPane.addTab("FILE", iconFile, panelFile,
@@ -145,7 +121,7 @@ public class QT extends JApplet {
 
 			table = panelDB.tableText.getText();
 
-			out.writeObject(0);
+			out.writeObject(new Integer(1));
 			out.writeObject(table);
 
 			result = (String)in.readObject();
