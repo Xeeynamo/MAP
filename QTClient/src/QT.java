@@ -124,10 +124,12 @@ public class QT extends JApplet {
 
 				JLabel text = new JLabel("Table:");
 				JLabel radius = new JLabel("Radius:");
-				JPanel upPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)), centralPanel = new JPanel(new BorderLayout()),
+				JPanel upPanel = new JPanel(new GridBagLayout()), centralPanel = new JPanel(new BorderLayout()),
 						downPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
 				JScrollPane scrollingArea = new JScrollPane(clusterOutput);
+
+				GridBagConstraints gbc = new GridBagConstraints();
 
 				executeButton = new JButton(buttonName);
 				executeButton.addActionListener(a);
@@ -136,11 +138,18 @@ public class QT extends JApplet {
 				clusterOutput.setEditable(false);
 
 
-
-				upPanel.add(text);
-				upPanel.add(tableText);
-				upPanel.add(radius);
-				upPanel.add(parameterText);
+				gbc.gridx = 0;
+				gbc.gridy = 0;
+				upPanel.add(text,gbc);
+				gbc.gridx = 1;
+				gbc.gridy = 0;
+				upPanel.add(tableText,gbc);
+				gbc.gridx = 0;
+				gbc.gridy = 1;
+				upPanel.add(radius,gbc);
+				gbc.gridx = 1;
+				gbc.gridy = 1;
+				upPanel.add(parameterText,gbc);
 
 
 				centralPanel.add(plotimage,BorderLayout.NORTH);
