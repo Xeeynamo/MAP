@@ -1,8 +1,11 @@
 package utility;
 
 import java.net.*;
+import java.io.IOException;
 
 /**
+ * Classe avviabile che gestisce le varie connessioni in ingresso, smistandole
+ * in thread separati.
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class MultiServer {
@@ -49,13 +52,13 @@ public class MultiServer {
                 System.out.println("Waiting for an incoming connection...");
                 Socket s = serverSocket.accept();
                 System.out.println("Client connected!" + s.toString());
-                new ServerOneClient(s);
+                new ServerOneClient(s).start();
             }
-            catch (java.net.UnknownHostException e)
+            catch (UnknownHostException e)
             {
                 System.out.println(e.getMessage());
             }
-            catch (java.io.IOException e)
+            catch (IOException e)
             {
                 System.out.println(e.getMessage());
             }
