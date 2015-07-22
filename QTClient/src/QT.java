@@ -17,6 +17,20 @@ public class QT extends JApplet {
 
 	private Socket socket = null;
 
+	protected static Object readObject(Socket socket) throws ClassNotFoundException, IOException
+	{
+		Object o;
+		ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+		o = in.readObject();
+		return o;
+	}
+	protected static void writeObject(Socket socket, Object o) throws IOException
+	{
+		ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+		out.writeObject(o);
+		out.flush();
+	}
+
 	private class AsyncLearningFromDatabaseRequest extends AsyncClass {
 		Socket socket;
 		private String table;
@@ -27,42 +41,58 @@ public class QT extends JApplet {
 			this.table = tableName;
 			this.radius = radius;
 		}
-		Object readObject() throws ClassNotFoundException, IOException
-		{
-			Object o;
-			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-			o = in.readObject();
-			return o;
-		}
-		void writeObject(Object o) throws IOException
-		{
-			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-			out.writeObject(o);
-			out.flush();
-		}
 		@Override public Object runasync() {
-			String result;
-
-			if (radius<=0)
-				throw new NumberFormatException("Radius<=0");
-
+			if (radius <= 0)
+				throw new NumberFormatException("Radius <= 0");
 			try
 			{
-				writeObject(new Integer(1));
-				writeObject(table);
+				writeObject(socket, new Integer(1));
+				writeObject(socket, table);
 
-				result = (String)readObject();
-
+				String result = (String)readObject(socket);
 				if(result.compareTo("OK") == 0) {
-					writeObject(new Double(radius));
-					result = (String)readObject();
-
-					if(result == "OK") {
-						return "Number of clusters :" + (Integer)readObject() + "\n" + (String)readObject();
+					writeObject(socket, new Double(radius));
+					result = (String)readObject(socket);
+					if(result.compareTo("OK") == 0) {
+						return "Number of clusters :" + (Integer)readObject(socket) + "\n" + (String)readObject(socket);
 					}
 					else {
 						JOptionPane.showMessageDialog(null, result, "Error", JOptionPane.ERROR_MESSAGE);
 					}
+				}
+				else {
+					JOptionPane.showMessageDialog(null, result, "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (IOException e) {
+
+			} catch (ClassNotFoundException e) {
+
+			}
+			return "Error";
+		}
+	}
+	private class AsyncLearningFromFileRequest extends AsyncClass {
+		Socket socket;
+		private String table;
+		private double radius;
+		public AsyncLearningFromFileRequest(IAsyncResponsive responsive, Socket socket, String tableName, double radius) {
+			super(responsive);
+			this.socket = socket;
+			this.table = tableName;
+			this.radius = radius;
+		}
+		@Override public Object runasync() {
+			if (radius <= 0)
+				throw new NumberFormatException("Radius <= 0");
+			try
+			{
+				writeObject(socket, new Integer(3));
+				writeObject(socket, table);
+				writeObject(socket, new Double(radius));
+
+				String result = (String)readObject(socket);
+				if(result.compareTo("OK") == 0) {
+					return (String)readObject(socket);
 				}
 				else {
 					JOptionPane.showMessageDialog(null, result, "Error", JOptionPane.ERROR_MESSAGE);
@@ -130,12 +160,16 @@ public class QT extends JApplet {
 			//copy img in src Directory and bin directory
 			java.net.URL imgURL = getClass().getResource("img/db.jpg");
 			ImageIcon iconDB = new ImageIcon(imgURL);
-			 panelDB = new JPanelCluster("MINE", new ActionListener() {
+			panelDB = new JPanelCluster("MINE", new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					String table = panelDB.tableText.getText();
-					double radius = new Double(panelDB.parameterText.getText()).doubleValue();
+					double radius;
+					try {
+						radius = new Double(panelDB.parameterText.getText()).doubleValue();
+					} catch (NumberFormatException ex) {
+						radius = 0.0;
+					}
 					new AsyncLearningFromDatabaseRequest(ResponsiveInterface, socket, table, radius).start();
-					return;
 				}
 			});
 			tabbedPane.addTab("DB", iconDB, panelDB,
@@ -143,13 +177,16 @@ public class QT extends JApplet {
 
 			imgURL = getClass().getResource("img/file.jpg");
 			ImageIcon iconFile = new ImageIcon(imgURL);
-			 panelFile = new JPanelCluster("STORE FROM FILE", new ActionListener() {
+			panelFile = new JPanelCluster("STORE FROM FILE", new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					String table = panelFile.tableText.getText();
+					double radius;
 					try {
-						learningFromFileAction();
-					} catch (IOException | ClassNotFoundException e1) {
-						System.out.println(e1);
+						radius = new Double(panelFile.parameterText.getText()).doubleValue();
+					} catch (NumberFormatException ex) {
+						radius = 0.0;
 					}
+					new AsyncLearningFromFileRequest(ResponsiveInterface, socket, table, radius).start();
 				}
 			});
 			tabbedPane.addTab("FILE", iconFile, panelFile,
@@ -162,29 +199,26 @@ public class QT extends JApplet {
 
 		@Override public void asyncStart(AsyncClass o)
 		{
-			panelDB.clusterOutput.setText("Processing the server...");
+			JTextArea textArea;
+			if (o instanceof AsyncLearningFromDatabaseRequest)
+				textArea = panelDB.clusterOutput;
+			else if (o instanceof AsyncLearningFromFileRequest)
+				textArea = panelFile.clusterOutput;
+			else
+				return;
+			textArea.setText("Processing the server...");
 		}
+
 		@Override public void asyncEnd(AsyncClass o, Object result)
 		{
+			JTextArea textArea;
 			if (o instanceof AsyncLearningFromDatabaseRequest)
-			{
-				if (result != null)
-					panelDB.clusterOutput.setText((String)result);
-			}
-		}
-		private void learningFromFileAction() throws SocketException, IOException, ClassNotFoundException {
-			/*String table = panelFile.tableText.getText();
-			double radius = Double.parseDouble(panelFile.parameterText.getText());
-
-			out.writeObject(3);
-			out.writeObject(table);
-			out.writeObject(radius);
-
-			String result = (String)in.readObject();
-			if(result == "OK")
-				JOptionPane.showMessageDialog(this,"Success!!");
+				textArea = panelDB.clusterOutput;
+			else if (o instanceof AsyncLearningFromFileRequest)
+				textArea = panelFile.clusterOutput;
 			else
-				JOptionPane.showMessageDialog(this,"Error: something went wrong"*/
+				return;
+			textArea.setText((String)result);
 		}
 	}
 
