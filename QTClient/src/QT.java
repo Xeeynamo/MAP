@@ -27,6 +27,19 @@ public class QT extends JApplet {
 			this.table = tableName;
 			this.radius = radius;
 		}
+		Object readObject() throws ClassNotFoundException, IOException
+		{
+			Object o;
+			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+			o = in.readObject();
+			return o;
+		}
+		void writeObject(Object o) throws IOException
+		{
+			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+			out.writeObject(o);
+			out.flush();
+		}
 		@Override public Object runasync() {
 			String result;
 
@@ -35,19 +48,17 @@ public class QT extends JApplet {
 
 			try
 			{
-				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-				out.writeObject(new Integer(1));
-				out.writeObject(table);
+				writeObject(new Integer(1));
+				writeObject(table);
 
-				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-				result = (String)in.readObject();
+				result = (String)readObject();
 
 				if(result.compareTo("OK") == 0) {
-					out.writeObject(new Double(radius));
-					result = (String)in.readObject();
+					writeObject(new Double(radius));
+					result = (String)readObject();
 
 					if(result == "OK") {
-						return "Number of clusters :" + (Integer)in.readObject() + "\n" + (String)in.readObject();
+						return "Number of clusters :" + (Integer)readObject() + "\n" + (String)readObject();
 					}
 					else {
 						JOptionPane.showMessageDialog(null, result, "Error", JOptionPane.ERROR_MESSAGE);

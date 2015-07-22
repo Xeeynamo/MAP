@@ -14,8 +14,6 @@ import java.io.*;
  */
 public class ServerOneClient extends Thread {
     private Socket socket;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
     private mining.QTMiner kmeans;
 
     /**
@@ -26,10 +24,22 @@ public class ServerOneClient extends Thread {
     public ServerOneClient(Socket s) throws IOException
     {
         socket = s;
-        in = new ObjectInputStream(socket.getInputStream());
-        out = new ObjectOutputStream(socket.getOutputStream());
         this.start();
     }
+
+	private static Object readObject(Socket socket) throws ClassNotFoundException, IOException
+	{
+		Object o;
+		ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+		o = in.readObject();
+		return o;
+	}
+	private static void writeObject(Socket socket, Object o) throws IOException
+	{
+		ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+		out.writeObject(o);
+		out.flush();
+	}
 
     /**
      * Riscrive il metodo run della superclasse Thread al fine di gestire le richieste del client
@@ -38,7 +48,7 @@ public class ServerOneClient extends Thread {
     {
         try {
             //BufferedInputStream inStream = new BufferedInputStream(socket.getInputStream());
-            Object o = in.readObject();
+            Object o = readObject(socket);
             if (o instanceof Integer)
             {
                 switch ((Integer)o)
@@ -74,63 +84,63 @@ public class ServerOneClient extends Thread {
     }
     public void learningFromFile(Socket socket) throws IOException, ClassNotFoundException
     {
-        //ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
-        //ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream());
-        String fileName = (String)in.readObject();
+        String fileName = (String)readObject(socket);
         try
         {
             String result = new QTMiner(fileName + ".dmp").toString();
-            out.writeObject("OK");
-            out.writeObject(result);
+            writeObject(socket, "OK");
+            writeObject(socket, result);
         }
         catch (Exception e)
         {
-            out.writeObject("BAD");
+            writeObject(socket, "BAD");
         }
     }
     public boolean learningFromDb(Socket socket)
     {
     	Object o;
     	try {
-			o = in.readObject();
+			o = readObject(socket);
 			if (o instanceof String)
 			{
 				String tableName = (String)o;
 				try {
 					Data data = new Data(tableName);
-					out.writeObject("OK");
-					o = in.readObject();
+					writeObject(socket, "OK");
+					o = readObject(socket);
 					if (o instanceof Double)
 					{
 						double radius = (Double)o;
 						if (radius <= 0.0)
-							out.writeObject("Radius must be greater than 0.");
+							writeObject(socket, "Radius must be greater than 0.");
 						else
 						{
 	                        QTMiner qt = new QTMiner(radius);
                             try {
 								int numC = qt.compute(data);
-								out.writeObject("OK");
-								out.writeObject(new Integer(numC));
-								out.writeObject(qt.getC().toString(data));
+								writeObject(socket, "OK");
+								writeObject(socket, new Integer(numC));
+								writeObject(socket, qt.getC().toString(data));
 							} catch (ClusteringRadiusException e) {
-								out.writeObject("An invalid radius value was specified.");
+								writeObject(socket, "An invalid radius value was specified.");
 							} catch (EmptyDatasetException e) {
-								out.writeObject("Dataset is empty.");
+								writeObject(socket, "Dataset is empty.");
 							}
 						}
 					}
 					else
-						out.writeObject("Expected a decimal value greater than 0.");
+						writeObject(socket, "Expected a decimal value greater than 0.");
 				} catch (EmptySetException e) {
-					out.writeObject("Table " + tableName + " empty or not found.");
+					writeObject(socket, "Table " + tableName + " empty or not found.");
 				}
 			}
 			else
-				out.writeObject("Expected the name of table to process.");
+				writeObject(socket, "Expected the name of table to process.");
 		} catch (ClassNotFoundException e) {
+			System.out.println(e.getMessage());
 			return false;
 		} catch (IOException e) {
+			System.out.println("I/O Error: " + e.getMessage());
 			return false;
 		}
     	return true;
