@@ -13,7 +13,16 @@ public class MultiServer {
     private ServerSocket serverSocket;
 
     public static void main(String[] args) {
-        new MultiServer(PORT).run();
+    	int port = 8080;
+    	if (args.length > 1)
+    	{
+    		try {
+    			port = Integer.parseInt(args[1]);
+    		} catch (NumberFormatException e) {
+    			// nessun bisogno di gestire questa eccezione
+    		}
+    	}
+        new MultiServer(port).run();
     }
 
     /**
