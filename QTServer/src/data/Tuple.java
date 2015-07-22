@@ -13,19 +13,38 @@ public class Tuple implements java.io.Serializable {
         this.tuple = new Item[size];
     }
 
+    /**
+     * Ottiene il numero di oggetti contenuti nella tupla corrente
+     * @return numero di oggetti
+     */
     public int getLenght() {
         return this.tuple.length;
     }
 
+    /**
+     * Ottiene uno specifico oggetto dalla tupla
+     * @param i indice nella tupla dell'ogggetto da ottenere
+     * @return ogetto richiesot
+     */
     public Item get(int i) {
         return this.tuple[i];
     }
 
+    /**
+     * Aggiunge un oggetto nella tupla corrente
+     * @param c oggetto da aggiungere
+     * @param i indice dove inserire l'elemento
+     */
     void add(Item c, int i) {
         if (i < this.tuple.length)
             this.tuple[i] = c;
     }
 
+    /**
+     * Ottiene la distanza complessiva tra due tuple
+     * @param obj tupla da confrontare
+     * @return distanza complessiva
+     */
     public double getDistance(Tuple obj) {
         double x = 0;
         for (int i = 0; (i < this.getLenght()) && (i < obj.getLenght()); i++)

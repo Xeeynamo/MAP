@@ -11,17 +11,28 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
+ * Astrazione per ottenere le informazioni dal database
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class TableData {
 
     DbAccess db;
 
-
+    /**
+     * Inizializzazione
+     * @param db specifica un databsae
+     */
     public TableData(DbAccess db) {
         this.db = db;
     }
 
+    /**
+     * Ottiene il nome degli attributi
+     * @param table nome della tabella la quale bisogna estrarre le informazioni
+     * @return lista di campioni estratti
+     * @throws SQLException
+     * @throws EmptySetException
+     */
     public List<Example> getDistinctTransazioni(String table) throws SQLException, EmptySetException {
         LinkedList<Example> transSet = new LinkedList<Example>();
         Statement statement;
@@ -62,7 +73,13 @@ public class TableData {
 
     }
 
-
+    /**
+     * Ottiene un insieme di oggetti rappresentanti le colonne
+     * @param table tabella la quale estrarre le informazioni
+     * @param column colonna da specificare
+     * @return insieme di oggetti
+     * @throws SQLException
+     */
     public Set<Object> getDistinctColumnValues(String table, Column column) throws SQLException {
         Set<Object> valueSet = new TreeSet<Object>();
         Statement statement;

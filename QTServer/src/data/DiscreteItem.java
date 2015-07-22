@@ -9,10 +9,18 @@ public class DiscreteItem extends Item {
         super(attribute, value);
     }
 
+    /**
+     * Ottiene la distanzatra i due oggetti discreti
+     * @return 0 se sono uguali, 1 se sono distanti tra loro
+     */
     public double distance(Object a) {
         return this.equals(a) == true ? 0 : 1;
     }
 
+    /**
+     * Ottiene un hash potenzialmente univoco dall'oggetto corrente
+     * @return hash a 32 bit
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -21,6 +29,10 @@ public class DiscreteItem extends Item {
         return result;
     }
 
+    /**
+     * Controlla se l'oggetto corrente è uguale all'oggetto da confrontare
+     * @return true se l'oggetto è uguale, altrimenti false
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

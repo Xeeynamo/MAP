@@ -71,6 +71,9 @@ public class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.
         return (clusteredData.size() != cluster.getSize()) == true ? 1 : -1;
     }
 
+    /**
+     * Ottiene un iteratore adatto ad enumerare i valori nel cluster
+     */
     public Iterator<Integer> iterator() {
         return clusteredData.iterator();
     }
@@ -101,7 +104,7 @@ public class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.
             str += "] dist=" + getCentroid().getDistance(data.getItemSet(v)) + "\n";
         }
 
-        str += "\nAvgDistance=" + getCentroid().avgDistance(data, set);
+        str += "AvgDistance=" + getCentroid().avgDistance(data, set) + "\n";
         return str;
 
     }
