@@ -102,16 +102,20 @@ public class ServerOneClient extends Thread {
      */
     public void learningFromFile(Socket socket) throws IOException, ClassNotFoundException
     {
-        String fileName = (String)readObject(socket);
+        String tableName = (String)readObject(socket);
+		double radius = (Double)readObject(socket);
+		// Il radius deve essere maggiore di 0
+		if (radius <= 0.0)
+			writeObject(socket, "Radius must be greater than 0.");
         try
         {
-            String result = new QTMiner(fileName + ".dmp").toString();
+            String result = new QTMiner(tableName + "_" + radius + ".dmp").toString();
             writeObject(socket, "OK");
             writeObject(socket, result);
         }
         catch (Exception e)
         {
-            writeObject(socket, "BAD");
+            writeObject(socket, "File not found");
         }
     }
     
@@ -136,16 +140,24 @@ public class ServerOneClient extends Thread {
 					if (o instanceof Double)
 					{
 						double radius = (Double)o;
+						// Il radius deve essere maggiore di 0
 						if (radius <= 0.0)
 							writeObject(socket, "Radius must be greater than 0.");
 						else
 						{
+							// Specifica il radius nel miner
 	                        QTMiner qt = new QTMiner(radius);
                             try {
+                            	// Tutto è pronto per computare le informazioni
 								int numC = qt.compute(data);
 								writeObject(socket, "OK");
+								// Il client è pronto a ricevere il risultato
 								writeObject(socket, new Integer(numC));
 								writeObject(socket, qt.getC().toString(data));
+								// Ora che le informazioni sono state processate, salva una copia
+								// del risultato in un file da richiamare poi successivamente
+								qt.salva(tableName + "_" + radius + ".dmp");
+								// Finito. Esce dalla funzione con successo.
 							} catch (ClusteringRadiusException e) {
 								writeObject(socket, "An invalid radius value was specified.");
 							} catch (EmptyDatasetException e) {
