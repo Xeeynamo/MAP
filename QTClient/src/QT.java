@@ -214,10 +214,6 @@ public class QT extends JApplet {
 	}
 
 	public void init() {
-		TabbedPane tab = new TabbedPane();
-		getContentPane().setLayout(new GridLayout(1, 1));
-		getContentPane().add(tab);
-
 		String strHost = getParameter("ServerIP");
 		String strPort = getParameter("Port");
 		int port;
@@ -249,9 +245,15 @@ public class QT extends JApplet {
 
 			out = new ObjectOutputStream(socket.getOutputStream());
 			in = new ObjectInputStream(socket.getInputStream());
+
+			TabbedPane tab = new TabbedPane();
+			getContentPane().setLayout(new GridLayout(1, 1));
+			getContentPane().add(tab);
+
 		} catch (IOException e) {
-
-
+			JOptionPane.showMessageDialog(null, "Unable to connect to " + strHost + ":" + port + ".\n" + e.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+			this.destroy();
 			System.exit(0);
 		}
 
