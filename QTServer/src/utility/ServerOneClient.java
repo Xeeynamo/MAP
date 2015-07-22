@@ -91,17 +91,6 @@ public class ServerOneClient extends Thread {
                 System.out.println(e.getMessage());
                 break;
             }
-<<<<<<< HEAD
-        } catch (IOException | ClassNotFoundException e) {
-            //System.out.println(e.getMessage());
-        	try {
-				writeObject(socket,e.getMessage());
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				System.out.println(e1.getMessage());
-			}
-=======
->>>>>>> origin/master
         }
     }
 
