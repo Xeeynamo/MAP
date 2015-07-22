@@ -10,6 +10,7 @@ import java.net.*;
 import java.io.*;
 
 /**
+ * Classe che gestisce una singola connessione da parte di un client
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
 public class ServerOneClient extends Thread {
@@ -21,12 +22,17 @@ public class ServerOneClient extends Thread {
      * @param s
      * @throws IOException
      */
-    public ServerOneClient(Socket s) throws IOException
-    {
+    public ServerOneClient(Socket s) throws IOException {
         socket = s;
-        this.start();
     }
 
+    /**
+     * Si occupa della ricezione sicura di un oggetto via socket
+     * @param socket la quale ricevere l'oggetto
+     * @return oggetto ricevuto dal socket specificato
+     * @throws ClassNotFoundException nel caso la classe ricevuta non vi è riconosciuta
+	 * @throws IOException nel caso si verifichi un errore in fase di lettura
+     */
 	private static Object readObject(Socket socket) throws ClassNotFoundException, IOException
 	{
 		Object o;
@@ -34,6 +40,12 @@ public class ServerOneClient extends Thread {
 		o = in.readObject();
 		return o;
 	}
+	/**
+     * Si occupa dell'invio sicuro di un oggetto via socket
+     * @param socket la quale riceverà l'oggetto
+	 * @param o oggetto da inviare
+	 * @throws IOException nel caso si verifichi un errore in fase di scrittura
+	 */
 	private static void writeObject(Socket socket, Object o) throws IOException
 	{
 		ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -42,46 +54,52 @@ public class ServerOneClient extends Thread {
 	}
 
     /**
-     * Riscrive il metodo run della superclasse Thread al fine di gestire le richieste del client
+     * Riscrive il metodo run della superclasse Thread al fine di gestire le
+     * richieste del client
      */
     public void run()
     {
-        try {
-            //BufferedInputStream inStream = new BufferedInputStream(socket.getInputStream());
-            Object o = readObject(socket);
-            if (o instanceof Integer)
-            {
-                switch ((Integer)o)
+    	while (socket.isConnected())
+    	{
+            try {
+            	// il primo oggetto in ricezione sarà l'operazione da effettuare
+                Object o = readObject(socket);
+                // ci si aspetta che l'operazione sia un intero
+                if (o instanceof Integer)
                 {
-                    case 0: // STORE TABLE FROM DB
-                        break; //To do : check table existence.
-                    case 1: // LEARNING FROM DB
-                        learningFromDb(socket);
-                        break;
-                    case 2: // STORE CLUSTER IN FILE
-                        learningFromDb(socket);
-                        break;
-                    case 3: // LEARNING FROM FILE
-                        learningFromFile(socket);
-                        break;
+                    switch ((Integer)o)
+                    {
+                        case 0: // STORE TABLE FROM DB
+                            break; //To do : check table existence.
+                        case 1: // LEARNING FROM DB
+                            learningFromDb(socket);
+                            break;
+                        case 2: // STORE CLUSTER IN FILE
+                            learningFromDb(socket);
+                            break;
+                        case 3: // LEARNING FROM FILE
+                            learningFromFile(socket);
+                            break;
+                        default:
+                        	// Nel caso venga selezionata un'operazione non supportata, si esce
+                            System.out.println("Operation " + o + " from " + socket + " not supported.\nThe connection will be closed.");
+                            socket.close();
+                            break;
+                    }
                 }
+            } catch (IOException | ClassNotFoundException e) {
+                System.out.println(e.getMessage());
+                break;
             }
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
+    	}
     }
 
-    public String readString(BufferedInputStream stream) throws IOException
-    {
-        byte[] contents = new byte[1024];
-        int bytesRead = 0;
-        String ret = "";
-
-        while( (bytesRead = stream.read(contents)) != -1){
-            ret = new String(contents, 0, bytesRead);
-        }
-        return ret;
-    }
+    /**
+     * Si occupa di leggere il set da file e di inviarlo al client
+     * @param socket del client
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public void learningFromFile(Socket socket) throws IOException, ClassNotFoundException
     {
         String fileName = (String)readObject(socket);
@@ -96,6 +114,13 @@ public class ServerOneClient extends Thread {
             writeObject(socket, "BAD");
         }
     }
+    
+    /**
+     * Si occupa di leggere il set dal database e di inviarlo al client
+     * @param socket del client
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public boolean learningFromDb(Socket socket)
     {
     	Object o;
