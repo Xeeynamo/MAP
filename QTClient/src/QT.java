@@ -57,7 +57,7 @@ public class QT extends JApplet {
 					writeObject(new Double(radius));
 					result = (String)readObject();
 
-					if(result == "OK") {
+					if(result.compareTo("OK") == 0) {
 						return "Number of clusters :" + (Integer)readObject() + "\n" + (String)readObject();
 					}
 					else {
@@ -83,15 +83,19 @@ public class QT extends JApplet {
 
 			private JTextField tableText = new JTextField(20);
 			private JTextField parameterText = new JTextField(10);
-			private JTextArea clusterOutput = new JTextArea(10,72);
+			private JTextArea clusterOutput = new JTextArea(10,12);
 			private JButton executeButton;
+			java.net.URL imgURL = getClass().getResource("img/db.jpg");	  //DA ELIMINARE UNA VOLTA IMPLEMENTATO IL MECCANISMO PER LA RICEZIONE DEL GRAFICO
+			private JLabel plotimage = new JLabel(new ImageIcon(imgURL)); //In realtÃ  l'immagine sarÃ  ottenuta dal server.
+
 
 			JPanelCluster(String buttonName, ActionListener a) {
+
 
 				JLabel text = new JLabel("Table:");
 				JLabel radius = new JLabel("Radius:");
 				JPanel upPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)), centralPanel = new JPanel(new BorderLayout()),
-						downPanel = new JPanel(new BorderLayout());
+						downPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
 				JScrollPane scrollingArea = new JScrollPane(clusterOutput);
 
@@ -109,16 +113,20 @@ public class QT extends JApplet {
 				upPanel.add(parameterText);
 
 
-				centralPanel.add(scrollingArea,BorderLayout.CENTER);
+				centralPanel.add(plotimage,BorderLayout.NORTH);
+				centralPanel.add(scrollingArea,BorderLayout.SOUTH);
 
 
-				downPanel.add(executeButton, BorderLayout.PAGE_END);
 
+				downPanel.add(executeButton);
 
+				this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+				this.add(Box.createRigidArea(new Dimension(0, 20)));
 				this.add(upPanel);
-				this.add(Box.createRigidArea(new Dimension(0,145)));
+				this.add(Box.createRigidArea(new Dimension(0, 145)));
 				this.add(centralPanel);
 				this.add(downPanel);
+
 
 
 			}
@@ -193,11 +201,11 @@ public class QT extends JApplet {
 		String strPort = getParameter("Port");
 		int port;
 
-		if (strHost == null) { // se non è specificato alcun indirizzo IP
+		if (strHost == null) { // se non ï¿½ specificato alcun indirizzo IP
 			strHost = DEFAULT_HOST; // allora ne imposta uno di default
 		}
 
-		if (strPort == null) { // se non è specificata la porta
+		if (strPort == null) { // se non ï¿½ specificata la porta
 			port = DEFAULT_PORT; // allora imposta la porta di default
 		}
 		else
@@ -206,7 +214,7 @@ public class QT extends JApplet {
 			try {
 				port = Integer.parseInt(strPort);
 			} catch (NumberFormatException e) {
-				// se il parametro è un formato differente da un numero
+				// se il parametro ï¿½ un formato differente da un numero
 				// allora imposta la porta come da default
 				port = DEFAULT_PORT;
 			}
