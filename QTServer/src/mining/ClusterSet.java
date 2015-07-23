@@ -1,7 +1,9 @@
 package mining;
 
 import data.Data;
+import utility.ClusterPlot;
 
+import java.net.Socket;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -12,12 +14,15 @@ import java.util.TreeSet;
  */
 public class ClusterSet implements Iterable<Cluster>, java.io.Serializable {
     private Set<Cluster> C;
+    private ClusterPlot cplot;
 
     /**
      * Crea un insieme vuoto di cluster
      */
     ClusterSet() {
+
         C = new TreeSet<Cluster>();
+        cplot = new ClusterPlot("Cluster Plot","distance","#cluster",500,220);
     }
 
     /**
@@ -68,5 +73,27 @@ public class ClusterSet implements Iterable<Cluster>, java.io.Serializable {
             }
         }
         return str;
+    }
+
+   public void populatePlot(Data data)
+    {
+        Iterator<Cluster> it = this.iterator();
+
+
+        while(it.hasNext())
+        {
+            Cluster c = it.next();
+            Iterator<Integer> i = c.iterator();
+                while(i.hasNext())
+                {
+                    Integer v = i.next();
+                    cplot.AddData(c.getCentroid().getDistance(data.getItemSet(v)), 1);
+                }
+        }
+    }
+
+    public void writePlot(Socket s)
+    {
+        this.cplot.WritePlot(s);
     }
 }

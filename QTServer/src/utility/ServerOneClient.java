@@ -9,6 +9,7 @@ import mining.QTMiner;
 import java.net.*;
 import java.io.*;
 
+
 /**
  * Classe che gestisce una singola connessione da parte di un client
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
@@ -17,6 +18,7 @@ class ServerOneClient extends Thread {
     private Socket socket;
     private mining.QTMiner kmeans;
 
+
     /**
      * Inizializza gli attributi socket, in ed out. Avvia il thread.
      * @param s
@@ -24,6 +26,7 @@ class ServerOneClient extends Thread {
      */
     ServerOneClient(Socket s) throws IOException {
         socket = s;
+
     }
 
     /**
@@ -70,7 +73,7 @@ class ServerOneClient extends Thread {
                     switch ((Integer)o)
                     {
                         case 0: // STORE TABLE FROM DB
-                            break; //To do : check table existence.
+                            break;
                         case 1: // LEARNING FROM DB
                             learningFromDb(socket);
                             break;
@@ -109,9 +112,12 @@ class ServerOneClient extends Thread {
 			writeObject(socket, "Radius must be greater than 0.");
         try
         {
-            String result = new QTMiner(tableName + "_" + radius + ".dmp").toString();
+			QTMiner qt = new QTMiner(tableName + "_" + radius + ".dmp");
+            String result = qt.toString();
             writeObject(socket, "OK");
             writeObject(socket, result);
+			qt.getC().writePlot(socket);
+
         }
         catch (Exception e)
         {
@@ -152,6 +158,9 @@ class ServerOneClient extends Thread {
 								// Il client è pronto a ricevere il risultato
 								writeObject(socket, new Integer(numC));
 								writeObject(socket, qt.getC().toString(data));
+								//Invio del grafico al client
+								qt.getC().populatePlot(data);
+								qt.getC().writePlot(socket);
 								// Ora che le informazioni sono state processate, salva una copia
 								// del risultato in un file da richiamare poi successivamente
 								qt.salva(tableName + "_" + radius + ".dmp");
@@ -180,4 +189,5 @@ class ServerOneClient extends Thread {
 		}
     	return true;
     }
+
 }

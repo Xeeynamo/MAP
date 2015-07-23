@@ -3,6 +3,8 @@ package mining;
 import data.Data;
 import data.Tuple;
 
+
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -11,8 +13,9 @@ import java.util.Set;
  * Singolo cluster, gestisce l'insieme di valori e tuple
  * @author Ciccariello Luciano, Palumbo Vito, Rosini Luigi
  */
-class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.Serializable {
+ class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.Serializable {
     private Tuple centroid;
+
 
     //private ArraySet clusteredData;
     private Set<Integer> clusteredData;
@@ -109,5 +112,4 @@ class Cluster implements Iterable<Integer>, Comparable<Cluster>, java.io.Seriali
         return str;
 
     }
-
 }

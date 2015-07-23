@@ -25,7 +25,7 @@ public class Data {
         this.data = new ArrayList<Example>();
         DbAccess db = new DbAccess();
         TableData td = new TableData(db);
-        db.closeConnection();
+        //db.closeConnection();
 
         try {
             db.initConnection();

@@ -1,12 +1,15 @@
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
+
+
 
 
 public class QT extends JApplet {
@@ -115,8 +118,7 @@ public class QT extends JApplet {
 			private JTextField parameterText = new JTextField(10);
 			private JTextArea clusterOutput = new JTextArea(10,12);
 			private JButton executeButton;
-			java.net.URL imgURL = getClass().getResource("img/db.jpg");	  //DA ELIMINARE UNA VOLTA IMPLEMENTATO IL MECCANISMO PER LA RICEZIONE DEL GRAFICO
-			private JLabel plotimage = new JLabel(new ImageIcon(imgURL)); //In realtà l'immagine sarà ottenuta dal server.
+			private JLabel plot = new JLabel("",null,JLabel.CENTER);
 
 
 			JPanelCluster(String buttonName, ActionListener a) {
@@ -152,7 +154,7 @@ public class QT extends JApplet {
 				upPanel.add(parameterText,gbc);
 
 
-				centralPanel.add(plotimage,BorderLayout.NORTH);
+				centralPanel.add(plot,BorderLayout.CENTER);
 				centralPanel.add(scrollingArea,BorderLayout.SOUTH);
 
 
@@ -160,9 +162,9 @@ public class QT extends JApplet {
 				downPanel.add(executeButton);
 
 				this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-				this.add(Box.createRigidArea(new Dimension(0, 20)));
+				this.add(Box.createRigidArea(new Dimension(0, 10)));
 				this.add(upPanel);
-				this.add(Box.createRigidArea(new Dimension(0, 145)));
+				this.add(Box.createRigidArea(new Dimension(0, 45)));
 				this.add(centralPanel);
 				this.add(downPanel);
 
@@ -229,13 +231,28 @@ public class QT extends JApplet {
 		@Override public void asyncEnd(AsyncClass o, Object result)
 		{
 			JTextArea textArea;
-			if (o instanceof AsyncLearningFromDatabaseRequest)
+			JLabel plot;
+			if (o instanceof AsyncLearningFromDatabaseRequest){
 				textArea = panelDB.clusterOutput;
-			else if (o instanceof AsyncLearningFromFileRequest)
+				plot = panelDB.plot;
+			}
+			else if (o instanceof AsyncLearningFromFileRequest) {
 				textArea = panelFile.clusterOutput;
+				plot = panelFile.plot;
+			}
 			else
 				return;
 			textArea.setText((String)result);
+			try {
+
+				//ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+				//byte[] buffer = (byte[])readObject(socket);
+				BufferedImage img = ImageIO.read(socket.getInputStream());
+				ImageIcon icon = new ImageIcon(img);
+				plot.setIcon(icon);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
