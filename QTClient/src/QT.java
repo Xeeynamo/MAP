@@ -245,12 +245,16 @@ public class QT extends JApplet {
 			textArea.setText((String)result);
 			try {
 
-				//ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-				//byte[] buffer = (byte[])readObject(socket);
-				BufferedImage img = ImageIO.read(socket.getInputStream());
+				byte[] buffer = (byte[])readObject(socket);
+				ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
+				BufferedImage img = ImageIO.read(bais);
+				bais.close();
 				ImageIcon icon = new ImageIcon(img);
 				plot.setIcon(icon);
-			} catch (IOException e) {
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}

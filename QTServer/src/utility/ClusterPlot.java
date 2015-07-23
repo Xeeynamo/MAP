@@ -77,9 +77,13 @@ public class ClusterPlot implements Serializable{
     public void WritePlot(Socket s)
     {
         try {
-
+            ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
             BufferedImage img = chart.createBufferedImage(width,height);
-            ImageIO.write(img,"PNG",s.getOutputStream());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(img,"PNG",baos);
+            byte[] buffer = baos.toByteArray();
+            baos.close();
+            out.writeObject(buffer);
 
         } catch (IOException e) {
             e.printStackTrace();
