@@ -1,6 +1,16 @@
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,6 +18,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 
 
@@ -232,13 +244,16 @@ public class QT extends JApplet {
 		{
 			JTextArea textArea;
 			JLabel plot;
+			int PDF = 0;
 			if (o instanceof AsyncLearningFromDatabaseRequest){
 				textArea = panelDB.clusterOutput;
 				plot = panelDB.plot;
+				PDF = 0;
 			}
 			else if (o instanceof AsyncLearningFromFileRequest) {
 				textArea = panelFile.clusterOutput;
 				plot = panelFile.plot;
+				PDF = 1;
 			}
 			else
 				return;
@@ -251,12 +266,19 @@ public class QT extends JApplet {
 				bais.close();
 				ImageIcon icon = new ImageIcon(img);
 				plot.setIcon(icon);
+				if (PDF == 1) PDFcreator ("Un nome",(String)result,img);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 			catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			
 		}
 	}
 
@@ -301,6 +323,82 @@ public class QT extends JApplet {
 			this.destroy();
 			System.exit(0);
 		}
+		
 
 	}
+	
+	private void PDFcreator (String title, String text, BufferedImage image ) throws Exception 
+    {
+        String outputFileName = title + ".pdf";
+        PDDocument doc = new PDDocument();
+        PDPage page = new PDPage();
+        doc.addPage(page);
+        PDPageContentStream contentStream = new PDPageContentStream(doc, page);
+
+        PDFont pdfFont = PDType1Font.HELVETICA;
+        float fontSize = 12;
+        float leading = 1.5f * fontSize;
+
+        PDRectangle mediabox = page.findMediaBox();
+        float margin = 72;
+        float width = mediabox.getWidth() - 2*margin;
+        float startX = mediabox.getLowerLeftX() + margin;
+        float startY = mediabox.getUpperRightY() - margin;
+
+        List<String> lines = new ArrayList<String>();
+        int lastSpace = -1;
+        while (text.length() > 0)
+        {
+            int spaceIndex = text.indexOf(' ', lastSpace + 1);
+            if (spaceIndex < 0)
+            {
+                lines.add(text);
+                text = "";
+            }
+            else
+            {
+                String subString = text.substring(0, spaceIndex);
+                float size = fontSize * pdfFont.getStringWidth(subString) / 1000;
+                if (size > width)
+                {
+                    if (lastSpace < 0) // So we have a word longer than the line... draw it anyways
+                        lastSpace = spaceIndex;
+                    subString = text.substring(0, lastSpace);
+                    lines.add(subString);
+                    text = text.substring(lastSpace).trim();
+                    lastSpace = -1;
+                }
+                else
+                {
+                    lastSpace = spaceIndex;
+                }
+            }
+        }
+
+        contentStream.beginText();
+        contentStream.setFont(pdfFont, fontSize);
+        contentStream.moveTextPositionByAmount(startX, startY);            
+        for (String line: lines)
+        {
+            contentStream.drawString(line);
+            contentStream.moveTextPositionByAmount(0, -leading);
+        }
+        contentStream.endText(); 
+
+        
+        try 
+        {
+            PDXObjectImage ximage = new PDPixelMap(doc, image);
+            float scale = 0.5f; // alter this value to set the image size
+            contentStream.drawXObject(ximage, 100, 400, ximage.getWidth()*scale, ximage.getHeight()*scale);
+        } 
+        
+        catch (FileNotFoundException fnfex) 
+        {
+            System.out.println("No image for you");
+        }
+        contentStream.close();
+        doc.save(outputFileName);
+        doc.close();
+    }
 }
