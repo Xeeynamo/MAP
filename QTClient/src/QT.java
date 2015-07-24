@@ -266,7 +266,7 @@ public class QT extends JApplet {
 				bais.close();
 				ImageIcon icon = new ImageIcon(img);
 				plot.setIcon(icon);
-				if (PDF == 1) PDFcreator ("Un nome",(String)result,img);
+				if (PDF == 1) PDFcreator (panelFile.tableText.getText()+ "_" + panelFile.parameterText.getText(),(String)result,img);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -329,7 +329,7 @@ public class QT extends JApplet {
 	
 	private void PDFcreator (String title, String text, BufferedImage image ) throws Exception 
     {
-        String outputFileName = title + ".pdf";
+        String outputFileName = "C:\\" + title + ".pdf";
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);
@@ -344,12 +344,14 @@ public class QT extends JApplet {
         float width = mediabox.getWidth() - 2*margin;
         float startX = mediabox.getLowerLeftX() + margin;
         float startY = mediabox.getUpperRightY() - margin;
+		float textWidth = pdfFont.getStringWidth(text);
+		float center = mediabox.getWidth() /2.0f;
 
         List<String> lines = new ArrayList<String>();
         int lastSpace = -1;
         while (text.length() > 0)
         {
-            int spaceIndex = text.indexOf(' ', lastSpace + 1);
+            int spaceIndex = text.indexOf('\n', lastSpace + 1);
             if (spaceIndex < 0)
             {
                 lines.add(text);
@@ -377,7 +379,7 @@ public class QT extends JApplet {
 
         contentStream.beginText();
         contentStream.setFont(pdfFont, fontSize);
-        contentStream.moveTextPositionByAmount(startX, startY);            
+        contentStream.moveTextPositionByAmount(startX, startY - center/2);
         for (String line: lines)
         {
             contentStream.drawString(line);
@@ -390,7 +392,7 @@ public class QT extends JApplet {
         {
             PDXObjectImage ximage = new PDPixelMap(doc, image);
             float scale = 0.5f; // alter this value to set the image size
-            contentStream.drawXObject(ximage, 100, 400, ximage.getWidth()*scale, ximage.getHeight()*scale);
+            contentStream.drawXObject(ximage, center - ximage.getWidth()/4, ximage.getHeight()+ startY - center, ximage.getWidth()*scale, ximage.getHeight()*scale);
         } 
         
         catch (FileNotFoundException fnfex) 

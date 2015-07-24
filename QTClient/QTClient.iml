@@ -10,16 +10,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../jfreechart-1.0.19.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../jcommon-1.0.23.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/pdfbox-app-1.8.10.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
