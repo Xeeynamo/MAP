@@ -1,6 +1,7 @@
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -18,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,6 +125,9 @@ public class QT extends JApplet {
 	private class TabbedPane extends JPanel implements IAsyncResponsive {
 		private JPanelCluster panelDB;
 		private JPanelCluster panelFile;
+		private JMenuBar mBar;
+		private JMenu menu, submenu;
+		private JMenuItem mItem;
 
 		private class JPanelCluster extends JPanel {
 
@@ -226,6 +231,18 @@ public class QT extends JApplet {
 			add(tabbedPane);
 			//The following line enables to use scrolling tabs.
 			tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+
+			mBar = new JMenuBar();
+			menu = new JMenu("File");
+			submenu = new JMenu("Export to...");
+
+			mItem = new JMenuItem("PDF");
+
+			submenu.add(mItem);
+			menu.add(submenu);
+
+			mBar.add(menu);
+			setJMenuBar(mBar);
 		}
 
 		@Override public void asyncStart(AsyncClass o)
@@ -244,16 +261,16 @@ public class QT extends JApplet {
 		{
 			JTextArea textArea;
 			JLabel plot;
-			int PDF = 0;
+			//int PDF = 0;
 			if (o instanceof AsyncLearningFromDatabaseRequest){
 				textArea = panelDB.clusterOutput;
 				plot = panelDB.plot;
-				PDF = 0;
+				//PDF = 0;
 			}
 			else if (o instanceof AsyncLearningFromFileRequest) {
 				textArea = panelFile.clusterOutput;
 				plot = panelFile.plot;
-				PDF = 1;
+				//PDF = 1;
 			}
 			else
 				return;
@@ -266,7 +283,32 @@ public class QT extends JApplet {
 				bais.close();
 				ImageIcon icon = new ImageIcon(img);
 				plot.setIcon(icon);
-				if (PDF == 1) PDFcreator (panelFile.tableText.getText()+ "_" + panelFile.parameterText.getText(),(String)result,img);
+
+				this.mItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e)
+					{
+						JFileChooser fileChooser = new JFileChooser();
+						fileChooser.setMultiSelectionEnabled(false);
+						fileChooser.setFileFilter(new FileNameExtensionFilter("PDF file","pdf"));
+
+						if(fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
+						{
+							File file = fileChooser.getSelectedFile();
+							String fileName = file.getName();
+							int i = fileName.indexOf('.');
+							try {
+								if(i >= 0 && fileName.substring(i+1).equalsIgnoreCase("pdf"))
+									PDFcreator(file.getAbsolutePath(),(String)result,img);
+								else
+									PDFcreator(file.getAbsolutePath()+ ".pdf",(String)result,img);
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+						}
+					}
+				});
+
+				//if (PDF == 1) PDFcreator (panelFile.tableText.getText()+ "_" + panelFile.parameterText.getText(),(String)result,img);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -280,6 +322,7 @@ public class QT extends JApplet {
 			
 			
 		}
+
 	}
 
 	public void init() {
@@ -329,7 +372,7 @@ public class QT extends JApplet {
 	
 	private void PDFcreator (String title, String text, BufferedImage image ) throws Exception 
     {
-        String outputFileName = "C:\\" + title + ".pdf";
+        //String outputFileName = "C:\\" + title + ".pdf";
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);
@@ -342,16 +385,15 @@ public class QT extends JApplet {
         PDRectangle mediabox = page.findMediaBox();
         float margin = 72;
         float width = mediabox.getWidth() - 2*margin;
-        float startX = mediabox.getLowerLeftX() + margin;
+        float startX = mediabox.getLowerLeftX() + margin/2;
         float startY = mediabox.getUpperRightY() - margin;
-		float textWidth = pdfFont.getStringWidth(text);
 		float center = mediabox.getWidth() /2.0f;
 
         List<String> lines = new ArrayList<String>();
         int lastSpace = -1;
         while (text.length() > 0)
         {
-            int spaceIndex = text.indexOf('\n', lastSpace + 1);
+            int spaceIndex = text.indexOf('\n');
             if (spaceIndex < 0)
             {
                 lines.add(text);
@@ -361,7 +403,14 @@ public class QT extends JApplet {
             {
                 String subString = text.substring(0, spaceIndex);
                 float size = fontSize * pdfFont.getStringWidth(subString) / 1000;
-                if (size > width)
+				if (lastSpace < 0)
+					lastSpace = spaceIndex;
+				else
+					lastSpace = spaceIndex;
+				lines.add(subString);
+				text = text.substring(lastSpace).trim();
+				lastSpace = -1;
+               /* if (size > width)
                 {
                     if (lastSpace < 0) // So we have a word longer than the line... draw it anyways
                         lastSpace = spaceIndex;
@@ -373,13 +422,13 @@ public class QT extends JApplet {
                 else
                 {
                     lastSpace = spaceIndex;
-                }
+                }*/
             }
         }
 
         contentStream.beginText();
         contentStream.setFont(pdfFont, fontSize);
-        contentStream.moveTextPositionByAmount(startX, startY - center/2);
+        contentStream.moveTextPositionByAmount(startX, startY + margin - center);
         for (String line: lines)
         {
             contentStream.drawString(line);
@@ -391,8 +440,9 @@ public class QT extends JApplet {
         try 
         {
             PDXObjectImage ximage = new PDPixelMap(doc, image);
-            float scale = 0.5f; // alter this value to set the image size
-            contentStream.drawXObject(ximage, center - ximage.getWidth()/4, ximage.getHeight()+ startY - center, ximage.getWidth()*scale, ximage.getHeight()*scale);
+            float scale = 0.75f;
+            contentStream.drawXObject(ximage, startX + center - ximage.getWidth()/2, ximage.getHeight()+ startY - center - margin,
+					                  ximage.getWidth()*scale, ximage.getHeight()*scale);
         } 
         
         catch (FileNotFoundException fnfex) 
@@ -400,7 +450,9 @@ public class QT extends JApplet {
             System.out.println("No image for you");
         }
         contentStream.close();
-        doc.save(outputFileName);
+        doc.save(title);
         doc.close();
     }
+
+
 }
