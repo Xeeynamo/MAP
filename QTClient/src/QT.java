@@ -19,7 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,6 +122,7 @@ public class QT extends JApplet {
 		}
 	}
 	private class TabbedPane extends JPanel implements IAsyncResponsive {
+		private JTabbedPane tabbedPane;
 		private JPanelCluster panelDB;
 		private JPanelCluster panelFile;
 		private JMenuBar mBar;
@@ -192,7 +192,7 @@ public class QT extends JApplet {
 
 		TabbedPane() {
 			super(new GridLayout(1, 1));
-			JTabbedPane tabbedPane = new JTabbedPane();
+			 tabbedPane = new JTabbedPane();
 			//copy img in src Directory and bin directory
 			java.net.URL imgURL = getClass().getResource("img/db.jpg");
 			ImageIcon iconDB = new ImageIcon(imgURL);
@@ -237,6 +237,37 @@ public class QT extends JApplet {
 			submenu = new JMenu("Export to...");
 
 			mItem = new JMenuItem("PDF");
+			mItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+					int index = tabbedPane.getSelectedIndex();
+					JPanelCluster panel = (JPanelCluster) tabbedPane.getComponentAt(index);
+
+					if (!panel.clusterOutput.getText().isEmpty()) {
+						Image img = ((ImageIcon)panel.plot.getIcon()).getImage();
+						BufferedImage image = (BufferedImage)img;
+
+						JFileChooser fileChooser = new JFileChooser();
+						fileChooser.setMultiSelectionEnabled(false);
+						fileChooser.setFileFilter(new FileNameExtensionFilter("PDF file", "pdf"));
+
+						if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+							File file = fileChooser.getSelectedFile();
+							String fileName = file.getName();
+							int i = fileName.indexOf('.');
+							try {
+								if (i >= 0 && fileName.substring(i + 1).equalsIgnoreCase("pdf"))
+									PDFcreator(file.getAbsolutePath(), panel.clusterOutput.getText(), image);
+								else
+									PDFcreator(file.getAbsolutePath() + ".pdf", panel.clusterOutput.getText(), image);
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+						}
+					}
+				}
+			});
 
 			submenu.add(mItem);
 			menu.add(submenu);
@@ -261,16 +292,16 @@ public class QT extends JApplet {
 		{
 			JTextArea textArea;
 			JLabel plot;
-			//int PDF = 0;
+
 			if (o instanceof AsyncLearningFromDatabaseRequest){
 				textArea = panelDB.clusterOutput;
 				plot = panelDB.plot;
-				//PDF = 0;
+
 			}
 			else if (o instanceof AsyncLearningFromFileRequest) {
 				textArea = panelFile.clusterOutput;
 				plot = panelFile.plot;
-				//PDF = 1;
+
 			}
 			else
 				return;
@@ -284,31 +315,6 @@ public class QT extends JApplet {
 				ImageIcon icon = new ImageIcon(img);
 				plot.setIcon(icon);
 
-				this.mItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e)
-					{
-						JFileChooser fileChooser = new JFileChooser();
-						fileChooser.setMultiSelectionEnabled(false);
-						fileChooser.setFileFilter(new FileNameExtensionFilter("PDF file","pdf"));
-
-						if(fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
-						{
-							File file = fileChooser.getSelectedFile();
-							String fileName = file.getName();
-							int i = fileName.indexOf('.');
-							try {
-								if(i >= 0 && fileName.substring(i+1).equalsIgnoreCase("pdf"))
-									PDFcreator(file.getAbsolutePath(),(String)result,img);
-								else
-									PDFcreator(file.getAbsolutePath()+ ".pdf",(String)result,img);
-							} catch (Exception e1) {
-								e1.printStackTrace();
-							}
-						}
-					}
-				});
-
-				//if (PDF == 1) PDFcreator (panelFile.tableText.getText()+ "_" + panelFile.parameterText.getText(),(String)result,img);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -322,7 +328,6 @@ public class QT extends JApplet {
 			
 			
 		}
-
 	}
 
 	public void init() {
@@ -372,7 +377,7 @@ public class QT extends JApplet {
 	
 	private void PDFcreator (String title, String text, BufferedImage image ) throws Exception 
     {
-        //String outputFileName = "C:\\" + title + ".pdf";
+
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);
@@ -384,7 +389,6 @@ public class QT extends JApplet {
 
         PDRectangle mediabox = page.findMediaBox();
         float margin = 72;
-        float width = mediabox.getWidth() - 2*margin;
         float startX = mediabox.getLowerLeftX() + margin/2;
         float startY = mediabox.getUpperRightY() - margin;
 		float center = mediabox.getWidth() /2.0f;
@@ -402,7 +406,6 @@ public class QT extends JApplet {
             else
             {
                 String subString = text.substring(0, spaceIndex);
-                float size = fontSize * pdfFont.getStringWidth(subString) / 1000;
 				if (lastSpace < 0)
 					lastSpace = spaceIndex;
 				else
@@ -410,19 +413,6 @@ public class QT extends JApplet {
 				lines.add(subString);
 				text = text.substring(lastSpace).trim();
 				lastSpace = -1;
-               /* if (size > width)
-                {
-                    if (lastSpace < 0) // So we have a word longer than the line... draw it anyways
-                        lastSpace = spaceIndex;
-                    subString = text.substring(0, lastSpace);
-                    lines.add(subString);
-                    text = text.substring(lastSpace).trim();
-                    lastSpace = -1;
-                }
-                else
-                {
-                    lastSpace = spaceIndex;
-                }*/
             }
         }
 
