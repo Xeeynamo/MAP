@@ -58,8 +58,6 @@ public class QT extends JApplet {
 			this.radius = radius;
 		}
 		@Override public Object runasync() {
-			if (radius <= 0)
-				throw new NumberFormatException("Radius <= 0");
 			try
 			{
 				writeObject(socket, new Integer(1));
@@ -100,6 +98,8 @@ public class QT extends JApplet {
 		@Override public Object runasync() {
 			if (radius <= 0)
 				throw new NumberFormatException("Radius <= 0");
+			else
+			{
 			try
 			{
 				writeObject(socket, new Integer(3));
@@ -117,6 +117,7 @@ public class QT extends JApplet {
 
 			} catch (ClassNotFoundException e) {
 
+			}
 			}
 			return "Error";
 		}
@@ -206,6 +207,7 @@ public class QT extends JApplet {
 						radius = 0.0;
 					}
 					new AsyncLearningFromDatabaseRequest(ResponsiveInterface, socket, table, radius).start();
+
 				}
 			});
 			tabbedPane.addTab("DB", iconDB, panelDB,
@@ -306,26 +308,32 @@ public class QT extends JApplet {
 			else
 				return;
 			textArea.setText((String)result);
-			try {
-
-				byte[] buffer = (byte[])readObject(socket);
-				ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
-				BufferedImage img = ImageIO.read(bais);
-				bais.close();
-				ImageIcon icon = new ImageIcon(img);
-				plot.setIcon(icon);
-
-			} catch (ClassNotFoundException e) {
+			
+			try 
+			{
+				String is_img = (String) readObject (socket);
+				if (is_img.compareTo("IMG")==0)
+				{
+					byte[] buffer = (byte[])readObject(socket);
+					ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
+					BufferedImage img = ImageIO.read(bais);
+					bais.close();
+					ImageIcon icon = new ImageIcon(img);
+					plot.setIcon(icon);
+				}
+				
+			}
+			catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 			catch (IOException e) {
 				e.printStackTrace();
 			}
 			
+			
 			catch (Exception e) {
 				e.printStackTrace();
 			}
-			
 			
 		}
 	}

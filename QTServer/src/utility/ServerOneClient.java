@@ -109,19 +109,24 @@ class ServerOneClient extends Thread {
 		double radius = (Double)readObject(socket);
 		// Il radius deve essere maggiore di 0
 		if (radius <= 0.0)
+		{
 			writeObject(socket, "Radius must be greater than 0.");
-        try
+			writeObject(socket, "IMG");
+		}
+		try
         {
 			QTMiner qt = new QTMiner(tableName + "_" + radius + ".dmp");
             String result = qt.toString();
             writeObject(socket, "OK");
             writeObject(socket, result);
+            writeObject(socket, "IMG");
 			qt.getC().writePlot(socket);
 
         }
         catch (Exception e)
         {
             writeObject(socket, "File not found");
+            writeObject(socket, "NO_IMG");
         }
     }
     
@@ -145,8 +150,11 @@ class ServerOneClient extends Thread {
 					{
 						double radius = (Double)o;
 						// Il radius deve essere maggiore di 0
-						if (radius <= 0.0)
+						if (radius <= 0)
+						{
 							writeObject(socket, "Radius must be greater than 0.");
+							writeObject(socket,"NO_IMG");
+						}
 						else
 						{
 							// Specifica il radius nel miner
@@ -159,6 +167,7 @@ class ServerOneClient extends Thread {
 								writeObject(socket, new Integer(numC));
 								writeObject(socket, qt.getC().toString(data));
 								//Invio del grafico al client
+								writeObject(socket,"IMG");
 								qt.getC().populatePlot(data);
 								qt.getC().writePlot(socket);
 								// Ora che le informazioni sono state processate, salva una copia
@@ -167,19 +176,28 @@ class ServerOneClient extends Thread {
 								// Finito. Esce dalla funzione con successo.
 							} catch (ClusteringRadiusException e) {
 								writeObject(socket, "An invalid radius value was specified.");
+								writeObject(socket,"NO_IMG");
 							} catch (EmptyDatasetException e) {
 								writeObject(socket, "Dataset is empty.");
+								writeObject(socket,"NO_IMG");
 							}
 						}
 					}
 					else
+					{
 						writeObject(socket, "Expected a decimal value greater than 0.");
+						writeObject(socket,"NO_IMG");
+					}
 				} catch (EmptySetException e) {
 					writeObject(socket, "Table " + tableName + " empty or not found.");
+					writeObject(socket,"NO_IMG");
 				}
 			}
 			else
+			{
 				writeObject(socket, "Expected the name of table to process.");
+				writeObject(socket,"NO_IMG");
+			}
 		} catch (ClassNotFoundException e) {
 			System.out.println(e.getMessage());
 			return false;
